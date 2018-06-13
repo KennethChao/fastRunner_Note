@@ -6,7 +6,7 @@
 \usepackage{mathrsfs}
 \usepackage{hyperref}
 
-\title{Note Fast Runner}
+\title{Note of Fast Runner}
 \author{Ken}
 \date{June, 2018}
 
@@ -30,6 +30,117 @@ I \ddot{(\theta)} = \sigma  x_z
 \end{align}
 \[
 y={C}x+{D}u\]
+
+\section{Code implementation}
+
+\subsection{Modeling and Parameters}
+Main idea: a virtual wheel (as the massless leg) with radius $r_{wheel}$ penetrate the ground for a distance $r_{pen}$ where a external force point $pe$ is attached on it. A body (with mass $m$ and inertia $Iyy$) is attached to the center of wheel. 
+Using PD control to interpret contact force when $p_e$ is under the ground.
+
+\subsubsection*{06/07 First prototype (Not used now)}
+\begin{itemize}
+\item Joint numbers: 2
+\item Joint types: Floating planer joint for virtual wheel and pin joint for the body link.
+\item Contact point type: External force point
+\item Virtual wheel rotation: set proper initial condition for virtual wheel (also need a large inertia to make it nearly constant).
+\end{itemize}
+
+Contact force: Assuming the ground height is $0$,
+\begin{align}
+F_z &= kp(0-pe_z) + kd(0 - ve_z)\\
+\phi &= atan2(pe_x,r_{wheel}-pe_z)\\
+F_x &= F_ztan(\phi)
+\end{align}
+where $ve$ is the velocity vector of the contact point $pe$, $kp$ and $kd$ are the PD control parameters. $F_x$ is calculated so that the vector of ground reaction force $[F_x,F_y,F_z]^T$ will point towards the virtual pivot (the center of the virtual wheel).\\
+
+Assessments:
+\begin{itemize}
+\item Need to set a non-zero inertia of massless virtual wheel (for numerical stability), otherwise the simulation will diverge.
+\item The inertia of virtual wheel need to be a large one for constant rotational speed.
+\item Suggestions: remove the massless link, attach the external force point to the body and change its position in the controller every time step.
+\end{itemize}
+
+\subsubsection*{06/08 Round Runner}
+\begin{itemize}
+\item Joint numbers: 1
+\item Joint types: Floating planer joint for the body link.
+\item Contact point type: External force point
+\item Virtual wheel rotation: Assigning the external force point location with respect to the joint in an open loop manner.
+\item 
+Contact force: Assuming the ground height is $0$,
+\begin{align}
+F_z &= kp(0-pe_z) + kd(0 - ve_z)\\
+\phi &= atan2(pe_x,r_{wheel}-pe_z)\\
+F_x &= F_ztan(\phi)
+\end{align}
+where $ve$ is the velocity vector of the contact point $pe$, $kp$ and $kd$ are the PD control parameters. $F_x$ is calculated so that the vector of ground reaction force $[F_x,F_y,F_z]^T$ will point towards the virtual pivot (the center of the virtual wheel).\\
+\end{itemize}
+
+
+
+Assessments:
+\begin{itemize}
+\item The ground reaction force looks better, while the energy is not balanced (after a while it will move towards the negative $x$ direction)
+\item The inertia of virtual wheel need to be a large one for constant rotational speed.
+\item Suggestions: Use the ground contact point (instead of external force point) to see how it goes.
+
+\end{itemize}
+
+\subsubsection*{06/11 Round Runner(with Ground Contact Point)}
+\begin{itemize}
+\item Joint numbers: 1
+\item Joint types: Floating planer joint for the body link.
+\item Contact point type: Ground contact point, linear contact model\footnote[1]{Disable the hardening stiffness in z direction by setting groundStiffeningLength to Double.NEGATIVE\_INFINITY}
+\item Virtual wheel rotation: Assigning the external force point location with respect to the joint in an open loop manner.
+\item \textbf{Contact point number} Parameterized, currently set to 3-6 points.
+\item
+Contact force: using built-in functionalities, only assigning the $kp$, $kd$ (PD parameters in the z direction), $kp_x$, and $kd_x$ (PD parameters in the x/y directions).
+\end{itemize}
+
+
+
+Assessments:
+\begin{itemize}
+\item Was able to generate a stable walking. Contact point has sliding.
+\item Due to setting up stiffness and damping for $x$ and $z$ separately, the force is not always point towards the virtual pivot.
+
+\end{itemize}
+
+\section{Info mightbe useful}
+
+\subsection{Going through references}
+\begin{enumerate}
+\item Compare different terrestiral locomotions: Some parameters of the walk are not speed- dependent. The swing duration is a constant time parameter \cite{Abourachid2001}.
+\item Trunk plays an important role during walking (birds) \cite{Abourachid2011}.
+\item Resonance drives are considered with adaptive control for robotics. The use of these drives allows increasing machine's quickness several times and decreasing energy expenses simultaneously 10-50 times \cite{Akinfiev1999}.
+\item Light weight leg (ostrich vs. moa) can run faster\cite{Alexander1985}. Also a famous allometric equation:
+\begin{align}
+Y = M^{3/4}
+\end{align}
+where $M$ is the body mass, Y is the metabolic rate.
+\item Human's walking may not be really self-optimized: the preferred speed maybe different from the energetically optimal speed\cite{Buchli2006}.
+\item It is concluded that the most important adjustment to the body’s spring system to accommodate higher stride frequencies is that leg spring becomes stiffer \cite{Farley1996}.
+\item magic equations for imd force (ostrich) \cite{Jindrich2007}
+\item gait frequency was reported to be highly correlated with the resonant frequency of the mass-spring model \cite{Lee2013}
+\item WABIAN, why you are here? \cite{Lim2008}
+\end{enumerate}
+\subsection{Categories}
+
+\begin{enumerate}
+\item Nonlinear oscillators/components \cite{Akinfiev1999,Anand1966,Babitsky1996,Buchli2006,Chatterjee2012};
+\item Bio-inspired robots: \cite{Ananthanarayanan2012,Lock2014}
+\item Reference I should read: \cite{Cham2002,Daley2006,Kagawa2010,Karssen2011}
+\item Article not found (or not free)\cite{Alexander1979}.
+\item Robots in 3D: \cite{Coleman1997}
+\item Stability analysis (Monocycle, linearized system) \cite{Coleman2010}
+\item Biology/Anatomical structure \cite{El-Mahdy2010,Gangl2004}
+\item Light weight fast robot \cite{Ethington2013,Iida2012}
+\item take a look again \cite{Gatesy1991}
+\item mechanism design of robot \cite{Grimmer2011}
+\item quadruped reference \cite{Hackert2001}
+\item human energy cost \cite{Holt1991}
+\item walking parameterization \cite{Lee2008}
+\end{enumerate}
 %where x is a vector with n states (i.e. $x\in R^n$) called state variables, u is the control input, y the is control output, and A is a n by n matrix. Depends on the dimension of input and output, the system can be classified as single-input single-output (SISO) system or multi-input multi-output (MIMO) system.\\\\
 %Other notes:
 % \begin{itemize}
@@ -230,5 +341,5 @@ y={C}x+{D}u\]
 
 
 \bibliographystyle{plain}
-%\bibliography{references}
+\bibliography{ref}
 \end{document}
