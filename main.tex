@@ -5,6 +5,7 @@
 \usepackage{graphicx}
 \usepackage{mathrsfs}
 \usepackage{hyperref}
+\usepackage{float}
 
 \title{Note of Fast Runner}
 \author{Ken}
@@ -12,8 +13,9 @@
 
 \usepackage{natbib}
 \usepackage{graphicx}
+\graphicspath{ {./images/} }
 \usepackage{amsthm}
- 
+
 
 \newtheorem{prop}{Proposition}
 
@@ -21,17 +23,161 @@
 
 \maketitle
 \section{System dynamics}
+\begin{figure}[h]
+\centering
 
-At the end of touchdown, assuming impact force is $\sigma$.
+\includegraphics{test.pdf} 
+\caption{The schematic of a 1 DOF hopper \cite{Cham2002}}
+\label{fig.1DOF-Hopper}
+\end{figure}
+\subsection{Sequence}
+\{AIR\_OFF, GROUND\_OFF, GROUND\_ON, AIR\_ON\}
+
+
+\subsection{Equation of motion}
+Using the model as shown in Fig. \ref{fig.1DOF-Hopper}, during the stand phase (i.e. $y\leq 0$), the equation of motion can be expressed as:
+\begin{align*}
+m \ddot y = -b\dot y +-ky -mg + f
+\end{align*}
+\noindent where $m$ is the mass, $b$ is the damping, $k$ is the stiffness, $f$ is the control input.
+Normalized by weight, the equation becomes
+\begin{align*}
+ \ddot y = -b/m\dot y +-k/my -g + f/m
+\end{align*}
+
+\noindent Expressed in state space form:
 
 \begin{align}
-\label{eqn:SLIP1}
-I \ddot{(\theta)} = \sigma  x_z
+\begin{bmatrix}
+\dot y  \\
+\ddot y 
+\end{bmatrix} = \begin{bmatrix}
+0 & 1 \\
+-k/m & -b/m
+\end{bmatrix}\begin{bmatrix}
+ y  \\
+\dot y 
+\end{bmatrix} + 
+\begin{bmatrix}
+0  \\
+-g+f/m 
+\end{bmatrix}
 \end{align}
-\[
-y={C}x+{D}u\]
+or equivalently
+\begin{align}
+\label{eq:groundEOM}
+\dot X = \begin{bmatrix}
+0 & 1 \\
+-\omega^2 & -2\xi\omega
+\end{bmatrix}X + 
+\begin{bmatrix}
+0  \\
+-g+f_n(t)
+\end{bmatrix} &= AX+B
+\end{align}
+where $X \triangleq [y,\dot y]^T$.
+When the hopper is in the air (i.e. $y> 0$, flight phase), 
+\begin{align}
+\label{eq:airEOM}
+\dot X = \begin{bmatrix}
+0 & 1 \\
+0 & 0
+\end{bmatrix}X + 
+\begin{bmatrix}
+0  \\
+-g 
+\end{bmatrix}
+\end{align}
+\noindent Define the force  of an open-loop motor pattern
+\begin{align}
+ f_n(t)=\begin{cases}
+    f/m, & \text{if $t_{off}<t<t_{off}+t_{on}$}.\\
+    0, & \text{otherwise}.
+  \end{cases}
+\end{align}
 
+\noindent\textbf{Solutions}
+
+For \eqref{eq:airEOM}:
+\begin{align}
+\label{eq:airEOMsol}
+X(t) = \begin{bmatrix}
+1 & t \\
+0 & 0
+\end{bmatrix}X_0 + 
+\begin{bmatrix}
+t^2/2  \\
+ t
+\end{bmatrix}(-g)
+\end{align}
+
+For \eqref{eq:groundEOM} when actuator is on:
+\begin{align}
+\label{eq:groundEOMsol}
+X(t) = e^{At}(X_0-X_{eq_{on}}) + X_{eq_{on}}
+\end{align}
+
+For \eqref{eq:groundEOM} when actuator is off:
+\begin{align}
+\label{eq:groundEOMsol2}
+X(t) = e^{At}(X_0-X_{eq_{off}}) + X_{eq_{off}}
+\end{align}
+
+where $X_{eq_{on}}$ and $X_{eq_{off}}$ are the equilibrium states:
+\begin{align}
+\label{eq:eqStates}
+X_{eq_{on}} &= [\frac{f_n-g}{\omega^2}, 0]^T\\
+X_{eq_{off}}&= [\frac{-g}{\omega^2}, 0]^T
+\end{align}
+
+\subsection{Stability Analysis}
+\subsubsection{Eigen values}
+For \eqref{eq:airEOM}, eigen values are $\pm 1$, in inherently unstable. (Why this does not matter? Because the contact)
+
+\noindent For \eqref{eq:groundEOM}, eigen values are
+$-\xi\omega \pm \omega\sqrt{(\xi^2-1)} = -\omega(\xi \pm \sqrt{\xi^2 -1}) = -\omega(\xi \pm i\sqrt{1-\xi^2 })$ As long as \omega  and \xi are larger than zero, the system is stable.
+
+\subsubsection{Poincare Method}
+\begin{figure}[H]
+\centering
+
+\includegraphics{modes.pdf} 
+\caption{The modes of the hopper \cite{Cham2002}}
+\label{fig.modes}
+\end{figure}
+
+Assumptions:
+\begin{itemize}
+\item the period is T
+\item two modes need to be checked
+\item $X(0) = X_{N_n}$ where $n$ indicates the $n^{th}$ trajectory
+\end{itemize}
+
+\noindent Using Equations \ref{eq:groundEOMsol}, we can derive
+\begin{align*}
+X(t_{on_n} )= e^{At_{on_n}}(X_{N_n} - X_{eq_{on}})+ X_{eq_{on}}
+\end{align*}
+\noindent Use the fact that 
+\begin{align*}
+X(t_{on_n}+2t_{a_n}) = -X(t_{on_n} ) 
+\end{align*}
+
+\noindent Then we can calculate the $X_{N_{n+1}}$ as follows:
+\begin{align}
+\nonumber X_{N_{n+1}} &= e^{A(T-2t_{a_n}-t_{on_n})}(-X(t_{on_n} ) - X_{eq_{off}}) + X_{eq_{off}}\\\
+\nonumber X_{N_{n+1}} &= e^{A(T-2t_{a_n}-t_{on_n})}(-e^{At_{on_n}}(X_{N_n} - X_{eq_{on}})- X_{eq_{on}} ) - X_{eq_{off}}) + X_{eq_{off}}\\
+&= X_{eq_{off}}-e^{A(T-2t_{a_n})}(X_{N_n}-X_{e_{on}}) -e^{A(T-2t_{a_n}-t_{on_n})}( X_{eq_{on}}+ X_{eq_{off}})
+\end{align}
+
+About the second switch surface $X_{landing_n}$,
+\begin{align}
+X_{landing_n} = -X(t_{on_n} ) =- e^{At_{on_n}}(X_{N_n} - X_{eq_{on}})- X_{eq_{on}}
+\end{align}
 \section{Code implementation}
+
+
+
+
 
 \subsection{Modeling and Parameters}
 Main idea: a virtual wheel (as the massless leg) with radius $r_{wheel}$ penetrate the ground for a distance $r_{pen}$ where a external force point $pe$ is attached on it. A body (with mass $m$ and inertia $Iyy$) is attached to the center of wheel. 
@@ -112,13 +258,13 @@ Assessments:
 \begin{enumerate}
 \item Compare different terrestiral locomotions: Some parameters of the walk are not speed- dependent. The swing duration is a constant time parameter \cite{Abourachid2001}.
 \item Trunk plays an important role during walking (birds) \cite{Abourachid2011}.
-\item Resonance drives are considered with adaptive control for robotics. The use of these drives allows increasing machine's quickness several times and decreasing energy expenses simultaneously 10-50 times \cite{Akinfiev1999}.
+\item The use of these drives (Resonance drives, with adaptive control) allows increasing machine's quickness several times and decreasing energy expenses simultaneously 10-50 times \cite{Akinfiev1999}.
 \item Light weight leg (ostrich vs. moa) can run faster\cite{Alexander1985}. Also a famous allometric equation:
 \begin{align}
 Y = M^{3/4}
 \end{align}
 where $M$ is the body mass, Y is the metabolic rate.
-\item Human's walking may not be really self-optimized: the preferred speed maybe different from the energetically optimal speed\cite{Buchli2006}.
+\item Human's walking may not be really self-optimized: the preferred speed maybe different from the energetically optimal speed\cite{Arnall2012}.
 \item It is concluded that the most important adjustment to the body’s spring system to accommodate higher stride frequencies is that leg spring becomes stiffer \cite{Farley1996}.
 \item magic equations for imd force (ostrich) \cite{Jindrich2007}
 \item gait frequency was reported to be highly correlated with the resonant frequency of the mass-spring model \cite{Lee2013}
@@ -127,19 +273,23 @@ where $M$ is the body mass, Y is the metabolic rate.
 \subsection{Categories}
 
 \begin{enumerate}
-\item Nonlinear oscillators/components \cite{Akinfiev1999,Anand1966,Babitsky1996,Buchli2006,Chatterjee2012};
+\item Nonlinear oscillators/components \cite{Akinfiev1999,Anand1966,Babitsky1996,Buchli2006,Chatterjee2012, Karssen2011, Plooij2011};
+\item zoology, biomechanics of animals:
+\cite{Abourachid2001,Abourachid2011,Alexander1979,Alexander1985,Daley2007}
 \item Bio-inspired robots: \cite{Ananthanarayanan2012,Lock2014}
 \item Reference I should read: \cite{Cham2002,Daley2006,Kagawa2010,Karssen2011}
 \item Article not found (or not free)\cite{Alexander1979}.
 \item Robots in 3D: \cite{Coleman1997}
-\item Stability analysis (Monocycle, linearized system) \cite{Coleman2010}
+\item Stability analysis (Monocycle, linearized system) \cite{Coleman2010} (Limit cycle) \cite{Cham2002, Kagawa2010} dimensionless \cite{Riese2012}
 \item Biology/Anatomical structure \cite{El-Mahdy2010,Gangl2004}
 \item Light weight fast robot \cite{Ethington2013,Iida2012}
 \item take a look again \cite{Gatesy1991}
 \item mechanism design of robot \cite{Grimmer2011}
-\item quadruped reference \cite{Hackert2001}
-\item human energy cost \cite{Holt1991}
-\item walking parameterization \cite{Lee2008}
+\item quadruped reference \cite{Hackert2001} MIT Cheetah\cite{Park2012}
+\item human energy cost, resonance usage \cite{Holt1991,Arnall2012, Park2013, Racic2009}
+\item walking parameterization \cite{Lee2008,Gatesy1991,Weems2006}
+\item human-animal differences \cite{Daley2006}
+\item open-loop robot \cite{Mombaur2005}, passive robot \cite{Owaki2011, Owaki2010, Owaki2009}
 \end{enumerate}
 %where x is a vector with n states (i.e. $x\in R^n$) called state variables, u is the control input, y the is control output, and A is a n by n matrix. Depends on the dimension of input and output, the system can be classified as single-input single-output (SISO) system or multi-input multi-output (MIMO) system.\\\\
 %Other notes:
