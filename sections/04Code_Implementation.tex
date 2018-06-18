@@ -1,0 +1,100 @@
+\section{Code implementation}
+
+
+
+
+
+\subsection{Modeling and Parameters}
+Main idea: a virtual wheel (as the massless leg) with radius $r_{wheel}$ penetrate the ground for a distance $r_{pen}$ where a external force point $pe$ is attached on it. A body (with mass $m$ and inertia $Iyy$) is attached to the center of wheel. 
+Using PD control to interpret contact force when $p_e$ is under the ground.
+
+\subsubsection*{06/07 First prototype (Not used now)}
+\begin{itemize}
+\item Joint numbers: 2
+\item Joint types: Floating planer joint for virtual wheel and pin joint for the body link.
+\item Contact point type: External force point
+\item Virtual wheel rotation: set proper initial condition for virtual wheel (also need a large inertia to make it nearly constant).
+\end{itemize}
+
+Contact force: Assuming the ground height is $0$,
+\begin{align}
+F_z &= kp(0-pe_z) + kd(0 - ve_z)\\
+\phi &= atan2(pe_x,r_{wheel}-pe_z)\\
+F_x &= F_ztan(\phi)
+\end{align}
+where $ve$ is the velocity vector of the contact point $pe$, $kp$ and $kd$ are the PD control parameters. $F_x$ is calculated so that the vector of ground reaction force $[F_x,F_y,F_z]^T$ will point towards the virtual pivot (the center of the virtual wheel).\\
+
+Assessments:
+\begin{itemize}
+\item Need to set a non-zero inertia of massless virtual wheel (for numerical stability), otherwise the simulation will diverge.
+\item The inertia of virtual wheel need to be a large one for constant rotational speed.
+\item Suggestions: remove the massless link, attach the external force point to the body and change its position in the controller every time step.
+\end{itemize}
+
+\subsubsection*{06/08 Round Runner}
+\begin{itemize}
+\item Joint numbers: 1
+\item Joint types: Floating planer joint for the body link.
+\item Contact point type: External force point
+\item Virtual wheel rotation: Assigning the external force point location with respect to the joint in an open loop manner.
+\item 
+Contact force: Assuming the ground height is $0$,
+\begin{align}
+F_z &= kp(0-pe_z) + kd(0 - ve_z)\\
+\phi &= atan2(pe_x,r_{wheel}-pe_z)\\
+F_x &= F_ztan(\phi)
+\end{align}
+where $ve$ is the velocity vector of the contact point $pe$, $kp$ and $kd$ are the PD control parameters. $F_x$ is calculated so that the vector of ground reaction force $[F_x,F_y,F_z]^T$ will point towards the virtual pivot (the center of the virtual wheel).\\
+\end{itemize}
+
+
+
+Assessments:
+\begin{itemize}
+\item The ground reaction force looks better, while the energy is not balanced (after a while it will move towards the negative $x$ direction)
+\item The inertia of virtual wheel need to be a large one for constant rotational speed.
+\item Suggestions: Use the ground contact point (instead of external force point) to see how it goes.
+
+\end{itemize}
+
+\subsubsection*{06/11 Round Runner(with Ground Contact Point)}
+\begin{itemize}
+\item Joint numbers: 1
+\item Joint types: Floating planer joint for the body link.
+\item Contact point type: Ground contact point, linear contact model\footnote[1]{Disable the hardening stiffness in z direction by setting groundStiffeningLength to Double.NEGATIVE\_INFINITY}
+\item Virtual wheel rotation: Assigning the external force point location with respect to the joint in an open loop manner.
+\item \textbf{Contact point number} Parameterized, currently set to 3-6 points.
+\item
+Contact force: using built-in functionalities, only assigning the $kp$, $kd$ (PD parameters in the z direction), $kp_x$, and $kd_x$ (PD parameters in the x/y directions).
+\end{itemize}
+
+
+
+Assessments:
+\begin{itemize}
+\item Was able to generate a stable walking. Contact point has sliding.
+\item Due to setting up stiffness and damping for $x$ and $z$ separately, the force is not always point towards the virtual pivot.
+
+\end{itemize}
+
+\subsubsection*{06/12 Round Runner(with External Contact Point Point)}
+
+\begin{itemize}
+\item Implement the same one as 06/11, but replace the ground contact point to the external one (because it is more complex for ground contact point to adjust stiffness/damping as parameters.)
+\item implement the linear ground contact model basically.
+\end{itemize}
+
+
+\subsubsection*{06/13 Round Runner}
+
+\begin{itemize}
+\item Parameterize contact point numbers
+\item Adding enum for switching between different setup: contact point type and the corresponding ground reaction force calculation: (w.r.t to the world frame or inertia frame.)
+\end{itemize}
+\subsubsection*{06/16 Round Runner (vertical hopper)}
+
+\begin{itemize}
+\item Adding vertical hopper with open-loop force control
+\item Playing with open-loop force magnitudes for different stability conditions
+\end{itemize}
+\pagebreak

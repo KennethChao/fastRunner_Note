@@ -9,7 +9,7 @@
 
 \title{Note of Fast Runner}
 \author{Ken}
-\date{June, 2018}
+\date{June, 2018\footnote{Last update: \today}}
 
 \usepackage{natbib}
 \usepackage{graphicx}
@@ -22,237 +22,21 @@
 \begin{document}
 
 \maketitle
-\section{System dynamics}
-\begin{figure}[h]
-\centering
 
-\includegraphics{test.pdf} 
-\caption{The schematic of a 1 DOF hopper \cite{Cham2002}}
-\label{fig.1DOF-Hopper}
-\end{figure}
-\subsection{Sequence}
-\{AIR\_OFF, GROUND\_OFF, GROUND\_ON, AIR\_ON\}
+\input{sections/01introduction.tex}
+%\clearpage
+\input{sections/02Vertical_Hopper.tex}
 
+\input{sections/03Simulation_Result.tex}
 
-\subsection{Equation of motion}
-Using the model as shown in Fig. \ref{fig.1DOF-Hopper}, during the stand phase (i.e. $y\leq 0$), the equation of motion can be expressed as:
-\begin{align*}
-m \ddot y = -b\dot y +-ky -mg + f
-\end{align*}
-\noindent where $m$ is the mass, $b$ is the damping, $k$ is the stiffness, $f$ is the control input.
-Normalized by weight, the equation becomes
-\begin{align*}
- \ddot y = -b/m\dot y +-k/my -g + f/m
-\end{align*}
-
-\noindent Expressed in state space form:
-
-\begin{align}
-\begin{bmatrix}
-\dot y  \\
-\ddot y 
-\end{bmatrix} = \begin{bmatrix}
-0 & 1 \\
--k/m & -b/m
-\end{bmatrix}\begin{bmatrix}
- y  \\
-\dot y 
-\end{bmatrix} + 
-\begin{bmatrix}
-0  \\
--g+f/m 
-\end{bmatrix}
-\end{align}
-or equivalently
-\begin{align}
-\label{eq:groundEOM}
-\dot X = \begin{bmatrix}
-0 & 1 \\
--\omega^2 & -2\xi\omega
-\end{bmatrix}X + 
-\begin{bmatrix}
-0  \\
--g+f_n(t)
-\end{bmatrix} &= AX+B
-\end{align}
-where $X \triangleq [y,\dot y]^T$.
-When the hopper is in the air (i.e. $y> 0$, flight phase), 
-\begin{align}
-\label{eq:airEOM}
-\dot X = \begin{bmatrix}
-0 & 1 \\
-0 & 0
-\end{bmatrix}X + 
-\begin{bmatrix}
-0  \\
--g 
-\end{bmatrix}
-\end{align}
-\noindent Define the force  of an open-loop motor pattern
-\begin{align}
- f_n(t)=\begin{cases}
-    f/m, & \text{if $t_{off}<t<t_{off}+t_{on}$}.\\
-    0, & \text{otherwise}.
-  \end{cases}
-\end{align}
-
-\noindent\textbf{Solutions}
-
-For \eqref{eq:airEOM}:
-\begin{align}
-\label{eq:airEOMsol}
-X(t) = \begin{bmatrix}
-1 & t \\
-0 & 0
-\end{bmatrix}X_0 + 
-\begin{bmatrix}
-t^2/2  \\
- t
-\end{bmatrix}(-g)
-\end{align}
-
-For \eqref{eq:groundEOM} when actuator is on:
-\begin{align}
-\label{eq:groundEOMsol}
-X(t) = e^{At}(X_0-X_{eq_{on}}) + X_{eq_{on}}
-\end{align}
-
-For \eqref{eq:groundEOM} when actuator is off:
-\begin{align}
-\label{eq:groundEOMsol2}
-X(t) = e^{At}(X_0-X_{eq_{off}}) + X_{eq_{off}}
-\end{align}
-
-where $X_{eq_{on}}$ and $X_{eq_{off}}$ are the equilibrium states:
-\begin{align}
-\label{eq:eqStates}
-X_{eq_{on}} &= [\frac{f_n-g}{\omega^2}, 0]^T\\
-X_{eq_{off}}&= [\frac{-g}{\omega^2}, 0]^T
-\end{align}
-
-\subsection{Stability Analysis}
-\subsubsection{Eigen values}
-For \eqref{eq:airEOM}, eigen values are $\pm 1$, in inherently unstable. (Why this does not matter? Because the contact)
-
-\noindent For \eqref{eq:groundEOM}, eigen values are
-$-\xi\omega \pm \omega\sqrt{(\xi^2-1)} = -\omega(\xi \pm \sqrt{\xi^2 -1}) = -\omega(\xi \pm i\sqrt{1-\xi^2 })$ As long as \omega  and \xi are larger than zero, the system is stable.
-
-\subsubsection{Poincare Method}
-\begin{figure}[H]
-\centering
-
-\includegraphics{modes.pdf} 
-\caption{The modes of the hopper \cite{Cham2002}}
-\label{fig.modes}
-\end{figure}
-
-Assumptions:
-\begin{itemize}
-\item the period is T
-\item two modes need to be checked
-\item $X(0) = X_{N_n}$ where $n$ indicates the $n^{th}$ trajectory
-\end{itemize}
-
-\noindent Using Equations \ref{eq:groundEOMsol}, we can derive
-\begin{align*}
-X(t_{on_n} )= e^{At_{on_n}}(X_{N_n} - X_{eq_{on}})+ X_{eq_{on}}
-\end{align*}
-\noindent Use the fact that 
-\begin{align*}
-X(t_{on_n}+2t_{a_n}) = -X(t_{on_n} ) 
-\end{align*}
-
-\noindent Then we can calculate the $X_{N_{n+1}}$ as follows:
-\begin{align}
-\nonumber X_{N_{n+1}} &= e^{A(T-2t_{a_n}-t_{on_n})}(-X(t_{on_n} ) - X_{eq_{off}}) + X_{eq_{off}}\\\
-\nonumber X_{N_{n+1}} &= e^{A(T-2t_{a_n}-t_{on_n})}(-e^{At_{on_n}}(X_{N_n} - X_{eq_{on}})- X_{eq_{on}} ) - X_{eq_{off}}) + X_{eq_{off}}\\
-&= X_{eq_{off}}-e^{A(T-2t_{a_n})}(X_{N_n}-X_{e_{on}}) -e^{A(T-2t_{a_n}-t_{on_n})}( X_{eq_{on}}+ X_{eq_{off}})
-\end{align}
-
-About the second switch surface $X_{landing_n}$,
-\begin{align}
-X_{landing_n} = -X(t_{on_n} ) =- e^{At_{on_n}}(X_{N_n} - X_{eq_{on}})- X_{eq_{on}}
-\end{align}
-\section{Code implementation}
+\input{sections/04Code_Implementation.tex}
 
 
 
 
 
-\subsection{Modeling and Parameters}
-Main idea: a virtual wheel (as the massless leg) with radius $r_{wheel}$ penetrate the ground for a distance $r_{pen}$ where a external force point $pe$ is attached on it. A body (with mass $m$ and inertia $Iyy$) is attached to the center of wheel. 
-Using PD control to interpret contact force when $p_e$ is under the ground.
 
-\subsubsection*{06/07 First prototype (Not used now)}
-\begin{itemize}
-\item Joint numbers: 2
-\item Joint types: Floating planer joint for virtual wheel and pin joint for the body link.
-\item Contact point type: External force point
-\item Virtual wheel rotation: set proper initial condition for virtual wheel (also need a large inertia to make it nearly constant).
-\end{itemize}
-
-Contact force: Assuming the ground height is $0$,
-\begin{align}
-F_z &= kp(0-pe_z) + kd(0 - ve_z)\\
-\phi &= atan2(pe_x,r_{wheel}-pe_z)\\
-F_x &= F_ztan(\phi)
-\end{align}
-where $ve$ is the velocity vector of the contact point $pe$, $kp$ and $kd$ are the PD control parameters. $F_x$ is calculated so that the vector of ground reaction force $[F_x,F_y,F_z]^T$ will point towards the virtual pivot (the center of the virtual wheel).\\
-
-Assessments:
-\begin{itemize}
-\item Need to set a non-zero inertia of massless virtual wheel (for numerical stability), otherwise the simulation will diverge.
-\item The inertia of virtual wheel need to be a large one for constant rotational speed.
-\item Suggestions: remove the massless link, attach the external force point to the body and change its position in the controller every time step.
-\end{itemize}
-
-\subsubsection*{06/08 Round Runner}
-\begin{itemize}
-\item Joint numbers: 1
-\item Joint types: Floating planer joint for the body link.
-\item Contact point type: External force point
-\item Virtual wheel rotation: Assigning the external force point location with respect to the joint in an open loop manner.
-\item 
-Contact force: Assuming the ground height is $0$,
-\begin{align}
-F_z &= kp(0-pe_z) + kd(0 - ve_z)\\
-\phi &= atan2(pe_x,r_{wheel}-pe_z)\\
-F_x &= F_ztan(\phi)
-\end{align}
-where $ve$ is the velocity vector of the contact point $pe$, $kp$ and $kd$ are the PD control parameters. $F_x$ is calculated so that the vector of ground reaction force $[F_x,F_y,F_z]^T$ will point towards the virtual pivot (the center of the virtual wheel).\\
-\end{itemize}
-
-
-
-Assessments:
-\begin{itemize}
-\item The ground reaction force looks better, while the energy is not balanced (after a while it will move towards the negative $x$ direction)
-\item The inertia of virtual wheel need to be a large one for constant rotational speed.
-\item Suggestions: Use the ground contact point (instead of external force point) to see how it goes.
-
-\end{itemize}
-
-\subsubsection*{06/11 Round Runner(with Ground Contact Point)}
-\begin{itemize}
-\item Joint numbers: 1
-\item Joint types: Floating planer joint for the body link.
-\item Contact point type: Ground contact point, linear contact model\footnote[1]{Disable the hardening stiffness in z direction by setting groundStiffeningLength to Double.NEGATIVE\_INFINITY}
-\item Virtual wheel rotation: Assigning the external force point location with respect to the joint in an open loop manner.
-\item \textbf{Contact point number} Parameterized, currently set to 3-6 points.
-\item
-Contact force: using built-in functionalities, only assigning the $kp$, $kd$ (PD parameters in the z direction), $kp_x$, and $kd_x$ (PD parameters in the x/y directions).
-\end{itemize}
-
-
-
-Assessments:
-\begin{itemize}
-\item Was able to generate a stable walking. Contact point has sliding.
-\item Due to setting up stiffness and damping for $x$ and $z$ separately, the force is not always point towards the virtual pivot.
-
-\end{itemize}
-
-\section{Info mightbe useful}
+\section{Info might be useful}
 
 \subsection{Going through references}
 \begin{enumerate}
