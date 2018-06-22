@@ -1,4 +1,4 @@
-\section{Study }
+\section{Pitch Stability of an Vertically Open-loop Hopper}
 
 \subsection{Jorge Cham's Dissertation - openloop control of 1DOF vertical hopper }
 \begin{figure}[h]
@@ -9,15 +9,15 @@
 \label{fig.1DOF-Hopper}
 \end{figure}
 
-\subsubsection{System assumptions}
-\begin{itemize}
-\item massless leg
-\item open-loop force control
-\end{itemize}
-\subsubsection{Sequence}
-\{AIR\_OFF, GROUND\_OFF, GROUND\_ON, AIR\_ON\}
+%\subsubsection{System assumptions}
+%\begin{itemize}
+%\item massless leg
+%\item open-loop force control
+%\end{itemize}
+%\subsubsection{Sequence}
+%\{AIR\_OFF, GROUND\_OFF, GROUND\_ON, AIR\_ON\}
 
-
+%
 \subsubsection{Equation of motion}
 Using the model as shown in Fig. \ref{fig.1DOF-Hopper}, during the stand phase (i.e. $y\leq 0$), the equation of motion can be expressed as:
 \begin{align*}
@@ -57,7 +57,14 @@ or equivalently
 \begin{bmatrix}
 0  \\
 -g+f_n(t)
-\end{bmatrix} &= AX+B
+\end{bmatrix} &= \begin{bmatrix}
+0 & 1 \\
+-k_p & -k_d
+\end{bmatrix}X + 
+\begin{bmatrix}
+0  \\
+-g+f_n(t)
+\end{bmatrix}
 \end{align}
 where $X \triangleq [y,\dot y]^T$.
 When the hopper is in the air (i.e. $y> 0$, flight phase), 
@@ -79,90 +86,442 @@ When the hopper is in the air (i.e. $y> 0$, flight phase),
     0, & \text{otherwise}.
   \end{cases}
 \end{align}
+%
+%\noindent\textbf{Solutions}
+%
+%For \eqref{eq:airEOM}:
+%\begin{align}
+%\label{eq:airEOMsol}
+%X(t) = \begin{bmatrix}
+%1 & t \\
+%0 & 0
+%\end{bmatrix}X_0 + 
+%\begin{bmatrix}
+%t^2/2  \\
+% t
+%\end{bmatrix}(-g)
+%\end{align}
+%
+%For \eqref{eq:groundEOM} when actuator is on:
+%\begin{align}
+%\label{eq:groundEOMsol}
+%X(t) = e^{At}(X_0-X_{eq_{on}}) + X_{eq_{on}}
+%\end{align}
+%
+%For \eqref{eq:groundEOM} when actuator is off:
+%\begin{align}
+%\label{eq:groundEOMsol2}
+%X(t) = e^{At}(X_0-X_{eq_{off}}) + X_{eq_{off}}
+%\end{align}
+%
+%where $X_{eq_{on}}$ and $X_{eq_{off}}$ are the equilibrium states:
+%\begin{align}
+%\label{eq:eqStates}
+%X_{eq_{on}} &= [\frac{f_n-g}{\omega^2}, 0]^T\\
+%X_{eq_{off}}&= [\frac{-g}{\omega^2}, 0]^T
+%\end{align}
+%
+%\subsubsection{Stability Analysis}
+%\textbf{Eigen values}
+%For \eqref{eq:airEOM}, eigen values are $\pm 1$, in inherently unstable. (Why this does not matter? Because the contact)
+%
+%\noindent For \eqref{eq:groundEOM}, eigen values are
+%$-\xi\omega \pm \omega\sqrt{(\xi^2-1)} = -\omega(\xi \pm \sqrt{\xi^2 -1}) = -\omega(\xi \pm i\sqrt{1-\xi^2 })$ As long as \omega  and \xi are larger than zero, the \textbf{unforced} system is stable.\\
+%
+%\pagebreak
+%
+%\noindent\textbf{Poincare Method: The rest part skipped}\\
+%Reasons: For more complex systems, hard to analytically derive the Poincare map (usually no closed-form solution). Found a package in spokeRunner simulation for Poincare Analysis (numerically), plan to reuse it.
+%
+%\begin{figure}[H]
+%\centering
+%
+%\includegraphics{modes.pdf} 
+%\caption{The modes of the hopper \cite{Cham2002}}
+%\label{fig.modes}
+%\end{figure}
+%
+%Assumptions:
+%\begin{itemize}
+%\item the period is T
+%\item two modes need to be checked
+%\item $X(0) = X_{N_n}$ where $n$ indicates the $n^{th}$ trajectory
+%\end{itemize}
+%
+%\noindent Using Equations \ref{eq:groundEOMsol}, we can derive
+%\begin{align*}
+%X(t_{on_n} )= e^{At_{on_n}}(X_{N_n} - X_{eq_{on}})+ X_{eq_{on}}
+%\end{align*}
+%\noindent Use the fact that 
+%\begin{align*}
+%X(t_{on_n}+2t_{a_n}) = -X(t_{on_n} ) 
+%\end{align*}
+%
+%\noindent Then we can calculate the $X_{N_{n+1}}$ as follows:
+%\begin{align}
+%\nonumber X_{N_{n+1}} &= e^{A(T-2t_{a_n}-t_{on_n})}(-X(t_{on_n} ) - X_{eq_{off}}) + X_{eq_{off}}\\\
+%\nonumber X_{N_{n+1}} &= e^{A(T-2t_{a_n}-t_{on_n})}(-e^{At_{on_n}}(X_{N_n} - X_{eq_{on}})- X_{eq_{on}} ) - X_{eq_{off}}) + X_{eq_{off}}\\
+%&= X_{eq_{off}}-e^{A(T-2t_{a_n})}(X_{N_n}-X_{e_{on}}) -e^{A(T-2t_{a_n}-t_{on_n})}( X_{eq_{on}}+ X_{eq_{off}})
+%\end{align}
+%
+%About the second switch surface $X_{landing_n}$,
+%\begin{align}
+%X_{landing_n} = -X(t_{on_n} ) =- e^{At_{on_n}}(X_{N_n} - X_{eq_{on}})- X_{eq_{on}}
+%\end{align}
+%
+%\pagebreak
+%\subsection{Jerry's proof for pitch stability }
+%
+%
+\subsection{System Dynamics}
+Use the state space of z motion form \ref{eq:groundEOM} with a simplified open-loop force input:
 
-\noindent\textbf{Solutions}
-
-For \eqref{eq:airEOM}:
 \begin{align}
-\label{eq:airEOMsol}
-X(t) = \begin{bmatrix}
-1 & t \\
-0 & 0
-\end{bmatrix}X_0 + 
 \begin{bmatrix}
-t^2/2  \\
- t
-\end{bmatrix}(-g)
+\dot z  \\
+\ddot z 
+\end{bmatrix} = \begin{bmatrix}
+0 & 1 \\
+-kp_z & -kd_z
+\end{bmatrix}\begin{bmatrix}
+ z  \\
+\dot z 
+\end{bmatrix} + 
+\begin{bmatrix}
+0  \\
+-g+f_n(t)
+\end{bmatrix}
 \end{align}
-
-For \eqref{eq:groundEOM} when actuator is on:
+where 
 \begin{align}
-\label{eq:groundEOMsol}
-X(t) = e^{At}(X_0-X_{eq_{on}}) + X_{eq_{on}}
+ f_n(t)=\begin{cases}
+    f_n\triangleq f/m, & \text{if $t_{flight}<t<t_{flight}+t_{contact}$}.\\
+    0, & \text{otherwise}.
+  \end{cases}
 \end{align}
-
-For \eqref{eq:groundEOM} when actuator is off:
+To further simplify the problem, assuming $f_n(t)$ is much more dominant than $-kp_zz-kd_z\dot z$-g so that:
 \begin{align}
-\label{eq:groundEOMsol2}
-X(t) = e^{At}(X_0-X_{eq_{off}}) + X_{eq_{off}}
+\label{eq:SimpleHopper}
+\begin{bmatrix}
+\dot z  \\
+\ddot z 
+\end{bmatrix} \approx \begin{bmatrix}
+0 & 1 \\
+0 & 0
+\end{bmatrix}\begin{bmatrix}
+ z  \\
+\dot z 
+\end{bmatrix} + 
+\begin{bmatrix}
+0  \\
+f_n(t)
+\end{bmatrix}
 \end{align}
-
-where $X_{eq_{on}}$ and $X_{eq_{off}}$ are the equilibrium states:
-\begin{align}
-\label{eq:eqStates}
-X_{eq_{on}} &= [\frac{f_n-g}{\omega^2}, 0]^T\\
-X_{eq_{off}}&= [\frac{-g}{\omega^2}, 0]^T
-\end{align}
-
-\subsubsection{Stability Analysis}
-\textbf{Eigen values}
-For \eqref{eq:airEOM}, eigen values are $\pm 1$, in inherently unstable. (Why this does not matter? Because the contact)
-
-\noindent For \eqref{eq:groundEOM}, eigen values are
-$-\xi\omega \pm \omega\sqrt{(\xi^2-1)} = -\omega(\xi \pm \sqrt{\xi^2 -1}) = -\omega(\xi \pm i\sqrt{1-\xi^2 })$ As long as \omega  and \xi are larger than zero, the system is stable.\\
-
-\pagebreak
-
-\noindent\textbf{Poincare Method: The rest part skipped}\\
-Reasons: For more complex systems, hard to analytically derive the Poincare map (usually no closed-form solution). Found a package in spokeRunner simulation for Poincare Analysis (numerically), plan to reuse it.
-
-\begin{figure}[H]
-\centering
-
-\includegraphics{modes.pdf} 
-\caption{The modes of the hopper \cite{Cham2002}}
-\label{fig.modes}
-\end{figure}
-
 Assumptions:
 \begin{itemize}
-\item the period is T
-\item two modes need to be checked
-\item $X(0) = X_{N_n}$ where $n$ indicates the $n^{th}$ trajectory
+\item $f_n(t)$\footnote{Conceptually, the $f_n(t)$ can be treated as a force applied from a nonlinear component which connects the massless leg to the body (so there is no velocity change happen at foot strike)} can induce stable vertical hopping motion.
+\item $t_0$ starts when the foot leaves the ground.
+\item $t_{flight} + t_{contact} = T$, $t_{contact} = \alpha$, and $T>\alpha$
 \end{itemize}
-
-\noindent Using Equations \ref{eq:groundEOMsol}, we can derive
-\begin{align*}
-X(t_{on_n} )= e^{At_{on_n}}(X_{N_n} - X_{eq_{on}})+ X_{eq_{on}}
-\end{align*}
-\noindent Use the fact that 
-\begin{align*}
-X(t_{on_n}+2t_{a_n}) = -X(t_{on_n} ) 
-\end{align*}
-
-\noindent Then we can calculate the $X_{N_{n+1}}$ as follows:
+Then the pitch dynamics with feedback control can be expressed as:
 \begin{align}
-\nonumber X_{N_{n+1}} &= e^{A(T-2t_{a_n}-t_{on_n})}(-X(t_{on_n} ) - X_{eq_{off}}) + X_{eq_{off}}\\\
-\nonumber X_{N_{n+1}} &= e^{A(T-2t_{a_n}-t_{on_n})}(-e^{At_{on_n}}(X_{N_n} - X_{eq_{on}})- X_{eq_{on}} ) - X_{eq_{off}}) + X_{eq_{off}}\\
-&= X_{eq_{off}}-e^{A(T-2t_{a_n})}(X_{N_n}-X_{e_{on}}) -e^{A(T-2t_{a_n}-t_{on_n})}( X_{eq_{on}}+ X_{eq_{off}})
+\begin{bmatrix}
+\dot \theta  \\
+\ddot \theta
+\end{bmatrix} = \begin{bmatrix}
+0 & 1 \\
+0 & 0
+\end{bmatrix}\begin{bmatrix}
+ \theta  \\
+\dot \theta
+\end{bmatrix} + 
+\begin{bmatrix}
+0  \\
+-f_n(t)m/I\Delta x
+\end{bmatrix}
+\end{align}
+\subsubsection{Poincare Section}
+\noindent Denote the state at the $n^{th}$ step Poincare section $\theta_n, \dot \theta_n$ (defined at the start of the flight phase). Then we can calculate the state at Poincare section at the $n+1^{th}$ step:
+\begin{align}
+\label{eq:PoincareSection1}
+\dot \theta_{n+1} &= \dot \theta_{n} - \frac{f}{I}\Delta x t_{contact} \\
+\nonumber\theta_{n_{touchDown}} &= \theta_{n} + \dot \theta_{n}t_{flight}\\
+\nonumber\dot \theta_{n_{touchDown}} &= \dot \theta_{n}\\
+\nonumber\theta_{n+1} &= \theta_{n} + \dot \theta_{n}t_{flight} + \dot \theta_{n}t_{contact} - \frac{1}{2}\frac{f}{I}\Delta xt^2_{contact}\\
+\label{eq:PoincareSection2} & = \theta_n + T\dot \theta_n - \frac{1}{2}\frac{f}{I}\alpha^2\Delta x
 \end{align}
 
-About the second switch surface $X_{landing_n}$,
+
+\subsubsection{Poincare Map of Pitch Dynamics with Proportional Control}
+By designing a proportional control such that $\Delta x = k\phi_n$ and defining $K =\frac{1}{2} \frac{f}{I}k$, Eq. \ref{eq:PoincareSection1} and Eq.\ref{eq:PoincareSection2} can be expressed as follows:
+\begin{align*}
+\theta_{n+1} &= \theta_n  - \alpha^2 K \theta_n + T\dot \theta_n\\
+\dot \theta_{n+1} &= \dot \theta_n  - 2\alpha K \theta_n\\
+\end{align*}
+Arranged them in the state space equation, we can get a discrete map $M$ (i.e. Poincare Map, with set of difference equations):
+
 \begin{align}
-X_{landing_n} = -X(t_{on_n} ) =- e^{At_{on_n}}(X_{N_n} - X_{eq_{on}})- X_{eq_{on}}
+\label{eq:PoincareMap}
+\begin{bmatrix}
+\theta_{n+1}  \\
+\dot \theta_{n+1}
+\end{bmatrix} = \begin{bmatrix}
+1-\alpha^2 K & T \\
+-2\alpha K & 1
+\end{bmatrix}\begin{bmatrix}
+ \theta_n  \\
+\dot \theta_n 
+\end{bmatrix} = M
+\begin{bmatrix}
+ \theta_n  \\
+\dot \theta_n 
+\end{bmatrix}
 \end{align}
 
+%\begin{align*}
+%\begin{bmatrix}
+%\theta_{n+1}  \\
+%\sqrt\alpha\dot \phi_{n+1}
+%\end{bmatrix} = \begin{bmatrix}
+%1-2\alpha K & 1 \\
+%-\sqrt{\alpha}K & \sqrt\alpha
+%\end{bmatrix}\begin{bmatrix}
+% \theta_n  \\
+% \dot \phi_n 
+%\end{bmatrix} \rightarrow
+%\end{align*}
+
+%\begin{align}
+%\begin{bmatrix}
+%\theta_{n+1}  \\
+%\dot \phi_{n+1}
+%\end{bmatrix} = \begin{bmatrix}
+%1-2\alpha K & 1 \\
+%-K & 1
+%\end{bmatrix}\begin{bmatrix}
+% \theta_n  \\
+%\dot \phi_n 
+%\end{bmatrix}
+%\end{align}
 \pagebreak
-\subsection{Jerry's proof for pitch stability }
+\noindent \textbf{Eigen value analysis}\\
+To analyze the stability of the equation in \ref{eq:PoincareMap}, we need to check whether the eigen values of Poincare map $M$ are within the unit cycle. Similar to the Rooth-Herwitz method for the continuous map, we can use Jury Stability Test (Ogata, 1985)\footnote{contents quotated from \cite{Cham2002}}, which states that a discrete system of two dimensions with the characteristic equations P(z) of the form:
+\begin{align*}
+P(z) = a_0z^2 + a_1z + a_2
+\end{align*}
+where $a_0>0$, is stable if the following conditions are all satisfied:
+\begin{align*}
+|a_2|&<a_0\\
+a_0+a_1+a_2&>0\\
+a_0-a_1+a_2&>0\\
+|(a_0+a_2)(a_2-a_0)|&>|a_1(a_0-a_1)|\\
+\end{align*}
+For a Jacobian of the form 
+\begin{align*}
+J = \begin{bmatrix}
+J_1 & J_2 \\
+J_3 & J_4
+\end{bmatrix}
+\end{align*}
+The characteristics equation can be expressed as follows:
+\begin{align*}
+P(z) = z^2-(J_1+J_4)z +(J_1J_4-J_2J_3)
+\end{align*}
+Substituting into the stable conditions stated above,
+\begin{align}
+\label{eq:condition1}
+|(J_1J_4-J_2J_3)|&<1\\
+\label{eq:condition2}
+1-(J_1+J_4)+(J_1J_4-J_2J_3)&>0\\
+\label{eq:condition3}
+1+(J_1+J_4)+(J_1J_4-J_2J_3)&>0\\
+\label{eq:condition4}
+|(1+(J_1J_4-J_2J_3))((J_1J_4-J_2J_3)-1)|&>|(J_1+J_4)(1+(J_1+J_4)|
+\end{align}
+
+\noindent \textbf{Check condition Eq.\ref{eq:condition1}}:\\
+First assuming $1-\alpha^2K+2T\alpha K>0$ 
+\begin{align*}
+1-\alpha^2K+2T\alpha K <1\\
+\rightarrow -\alpha^2K+2T\alpha K < 0\\
+\rightarrow \alpha K(-\alpha + 2T) < 0\\
+\end{align*}
+Since $\alpha>0$, $K>0$, and $T>\alpha$, the assumption cannot satisfy the condition.\\ Next, assuming $1-\alpha^2K+2T\alpha K<0$ :
+\begin{align*}
+1-\alpha^2K+2T\alpha K >-1\\
+\rightarrow -1+\alpha^2K-2T\alpha K < 1\\
+\rightarrow \alpha K(\alpha - 2T) < 2\\
+\end{align*}
+Since $T>\alpha$, the condition can always be satisfied, as long as the following condition is satisfied:
+\begin{align*}
+(J_1J_4-J_2J_3) = (1-\alpha^2K+2T\alpha K) <0
+ \end{align*}
+Combine conditions above we can get a new inequality as follows:
+\begin{align}
+\label{iq:detM}
+-1< (J_1J_4-J_2J_3) = (1-\alpha^2K+2T\alpha K)  <0
+ \end{align}
+
+
+\noindent \textbf{Check condition Eq.\ref{eq:condition2}}:\\
+\begin{align*}
+1-(1-\alpha^2K+ 1) + (1-\alpha^2K+2T\alpha K)&>0\\
+\rightarrow 2T\alpha K&>0 
+\end{align*}
+From the last inequality we can get the condition is \underline{always hold}.\\
+
+\noindent \textbf{Check condition Eq.\ref{eq:condition3}}:\\
+\begin{align*}
+1  + (1-\alpha^2K+ 1) + (1-\alpha^2K+2T\alpha K) &>0 \\
+\rightarrow 4-2 \alpha^2K+ 2T\alpha K &> 0\\
+\rightarrow 4 + \alpha K(-2\alpha+ 2T) &> 0
+\end{align*}
+From the last inequality we can get the condition is \underline{always hold}.\\
+
+\noindent \textbf{Check condition Eq.\ref{eq:condition4}}:\\
+Based on Eq. \ref{iq:detM}, the left hand side of Eq. \ref{eq:condition4} can be rearranged as :
+\begin{align*}
+|(det(M)+1)(det(M)-1)| = |det(M)^2-1| = 1-det(M)^2
+\end{align*}
+From Eq. \ref{eq:condition2} and \ref{eq:condition3} we can got $(J_1+J_4)>0$, therefore the right hand side of Eq. \ref{eq:condition4} can be rearranged as:
+\begin{align*}
+|(J_1+J_4)(J_1+J_4 +1)| = (J_1+J_4)(J_1+J_4 +1)
+\end{align*}
+Therefore the Eq. \ref{eq:condition4} can be expressed as follows:
+\begin{align*}
+1-det(M)^2> tr(M) ( tr(M) + 1)
+\end{align*}
+where $det(M) = \prod\limits_{i}^{}\lambda_i = (J_1J_4-J_2J_3)$ is the determinant of matrix $M$ and $tr(M)=\sum\limits_{i}^{}\lambda_i = (J_1 + J_4)$ is the trace of the matrix $M$.\\
+
+\noindent \textbf{To sum up}\\
+For the (Poincare) stability, the following conditions need to be satisfied:
+\begin{align}
+-1<det(M)&<0\\
+0< tr(M) ( tr(M) + 1)&<1-det(M)^2
+\end{align}
+where
+\begin{align*}
+det(M) &= 1- \alpha^2K + 2T\alpha K\\
+tr(M) &= 2- \alpha^2K \\
+K &= \frac{1}{2}\frac{f_n}{I}k
+\end{align*}
+
+\noindent \textbf{Result}\\
+After check the sign of the $det(M)$, it was found that $det(M)$ always $>0$:
+\begin{align*}
+ 1-\alpha^2K+2T\alpha K = 1 + \alpha K(-\alpha+2T)>0
+\end{align*}
+Therefore, it is concluded that proportional control with this system setup cannot stablize the pitch dynamics.
+\pagebreak
+
+\subsubsection{Poincare Map of Pitch Dynamics with PD Control}
+By designing a PD control such that $\Delta x = k_p\theta_n+k_d\dot \theta_n$ and defining $K =\frac{1}{2} \frac{f_n}{I}k_p$, $C =\frac{1}{2} \frac{f_n}{I}k_d$, Eq. \ref{eq:PoincareSection1} and Eq.\ref{eq:PoincareSection2} can be expressed as follows:
+\begin{align*}
+\theta_{n+1} &= \theta_n  - \alpha^2 K \theta_n + T\dot \theta_n - \alpha^2 C \dot\theta_n\\
+\dot \theta_{n+1} &= \dot \theta_n  - 2\alpha K \theta_n- 2\alpha C \dot\theta_n\\
+\end{align*}
+Arranged them in the state space equation, we can get a discrete map $M_{pd}$:
+
+\begin{align}
+\label{eq:PoincareMapPD}
+\begin{bmatrix}
+\theta_{n+1}  \\
+\dot \theta_{n+1}
+\end{bmatrix} = \begin{bmatrix}
+1-\alpha^2 K & T-\alpha^2 C \\
+-2\alpha K & 1-2\alpha C
+\end{bmatrix}\begin{bmatrix}
+ \theta_n  \\
+\dot \theta_n 
+\end{bmatrix} = M_{pd}
+\begin{bmatrix}
+ \theta_n  \\
+\dot \theta_n 
+\end{bmatrix}
+\end{align}
+
+
+
+
+
+
+%\begin{align*}
+%\begin{bmatrix}
+%\theta_{n+1}  \\
+%\sqrt\alpha\dot \phi_{n+1}
+%\end{bmatrix} = \begin{bmatrix}
+%1-2\alpha K & 1 \\
+%-\sqrt{\alpha}K & \sqrt\alpha
+%\end{bmatrix}\begin{bmatrix}
+% \theta_n  \\
+% \dot \phi_n 
+%\end{bmatrix} \rightarrow
+%\end{align*}
+
+%\begin{align}
+%\begin{bmatrix}
+%\theta_{n+1}  \\
+%\dot \phi_{n+1}
+%\end{bmatrix} = \begin{bmatrix}
+%1-2\alpha K & 1 \\
+%-K & 1
+%\end{bmatrix}\begin{bmatrix}
+% \theta_n  \\
+%\dot \phi_n 
+%\end{bmatrix}
+%\end{align}
+\pagebreak
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsubsection{Analytical Solution for Eq.\ref{eq:SimpleHopper}}
+Start from $t_0$ (the beginning of the flight phase), assuming $Z = [0, \dot z_0]^T$, then we can get:
+
+\begin{align}
+z(t_{flight}) &= \dot z_0t_{flight} - 1/2gt^2_{flight} = 0\\
+\dot z(t_{flight}) &= \dot z_0 - gt_{flight} = -\dot z_0
+\end{align}
+where a constraint for the $\dot z_0$ can be derived:
+\begin{align}
+\label{eq:tFlight}
+\dot z_0 =  1/2gt_{flight}\\
+\end{align}
+Then we can derive the solution at the end of the touch down:
+\begin{align}
+z(1) &= -\dot z_0t_{contact} + (f/m -g)t_{contact}^2 = 0 \\
+\dot z(1) &= -\dot z_0 + (f/m -g)t_{contact} = \dot z_0
+\end{align}
+where another constraint for the $\dot z_0$ can be derived:
+\begin{align}
+\label{eq:tContact}
+\dot z_0 =  1/2(f/m-g)t_{contact}
+\end{align}
+
+\noindent \textbf{Period $T$, contact force $f$ and $t_{contact}$ are dependent }
+From Eqs. \ref{eq:tContact} and \ref{eq:tFlight} we can get
+
+\begin{align*}
+1/2gt_{flight} &=  1/2(f/m-g)t_{contact}\\
+\rightarrow t_{flight} &= (f/mg -1) t_{contact}\\
+\rightarrow t_{flight} + t_{contact} &= T = (f/mg)t_{contact}
+\end{align*}
+
+
 
 \pagebreak
