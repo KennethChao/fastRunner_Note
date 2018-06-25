@@ -522,6 +522,43 @@ From Eqs. \ref{eq:tContact} and \ref{eq:tFlight} we can get
 \rightarrow t_{flight} + t_{contact} &= T = (f/mg)t_{contact}
 \end{align*}
 
+\pagebreak
 
+\subsubsection{General Poincare map for Hybrid Linear Systems with Arbitrary Mode Poundaries}
+Assuming the system is linear and time-invariant, and given by the following differential equations:
+
+\begin{align}
+\dot Z = AZ +B
+\end{align}
+where \textbf{A is invertible}. If the \textbf{mode transistion  is time-based}, then we can augment the state of the system with $t$:
+\begin{align}
+\label{eq:AtEOM}
+\dot X = 
+\begin{bmatrix}
+\dot t  \\
+\dot Z
+\end{bmatrix} = \begin{bmatrix}
+0 & 0 \\
+0 & A
+\end{bmatrix}X + \begin{bmatrix}
+1\\%
+B 
+\end{bmatrix}
+\end{align}
+where $X = [t,Z]^T$. Assuming the mode trasition happened under the following condition:
+\begin{align}
+e^T X = 0
+\end{align}
+and takes time $\Delta t$ from $X_n$ to $X_{n+1}$, then the Poincare map (Jacobian matrix) can be expressed as:
+\begin{align}
+\frac{\partial  X_{n+1}}{\partial  X_{n}} = -\dot X_{n+1}(e^T\dot X_{n+1})^{-1} e^T\begin{bmatrix}
+1 & 0 \\
+0 & e^{A\Delta t}
+\end{bmatrix} + 
+\begin{bmatrix}
+1 & 0 \\
+0 & e^{A\Delta t}
+\end{bmatrix}
+\end{align}
 
 \pagebreak
