@@ -7,9 +7,9 @@ kdMax = 7;
 sampledNum = 200;
 
 
-T = 0.5;
-aMin =0.3*T;
-aMax = 0.5*T;
+T = 0.25;
+aMin =0.4*T;
+aMax = 0.4*T;
 sampledNum2 = 10;
 
 
@@ -43,8 +43,8 @@ for i = 1:size(X,1)
                 K = 1/2*f/I*kp;
                 C = 1/2*f/I*kd;
 
-                A = [1-a^2*K T-a^2*C; 
-                    -2*a*K 1-2*a*C];
+                A = [           1,          T - a + exp(a);
+                         exp(-2*K*a), exp(-2*K*a)*(T - a) + 1];
                 qq = abs(eig(A));
                 if qq(1)<1 && qq(2)<1
                     Map(i,j) = max(qq);

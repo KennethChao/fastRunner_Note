@@ -173,7 +173,7 @@ When the hopper is in the air (i.e. $y> 0$, flight phase),
 %\subsection{Jerry's proof for pitch stability }
 %
 %
-\subsection{System Dynamics of an Open-loop Controlled Hopper}
+\subsection{Stability Analysis of an Open-loop Controlled Hopper with Discrete Pitch Angle Control}
 Use the state space of z motion form \ref{eq:groundEOM} with a simplified open-loop force input:
 
 \begin{align}
@@ -415,7 +415,7 @@ Therefore, it is concluded that proportional control with this system setup cann
 \pagebreak
 
 \subsubsection{Poincare Map of Pitch Dynamics with PD Control}
-By designing a PD control such that $\Delta x = k_p\theta_n+k_d\dot \theta_n$ and defining $K =\frac{1}{2} \frac{f_n}{I}k_p$, $C =\frac{1}{2} \frac{f_n}{I}k_d$, Eq. \ref{eq:PoincareSection1} and Eq.\ref{eq:PoincareSection2} can be expressed as follows:
+By designing a PD control such that $\Delta x = k_p\theta_n+k_d\dot \theta_n$ and defining $K =\frac{1}{2} \frac{f}{I}k_p$, $C =\frac{1}{2} \frac{f}{I}k_d$, Eq. \ref{eq:PoincareSection1} and Eq.\ref{eq:PoincareSection2} can be expressed as follows:
 \begin{align*}
 \theta_{n+1} &= \theta_n  - \alpha^2 K \theta_n + T\dot \theta_n - \alpha^2 C \dot\theta_n\\
 \dot \theta_{n+1} &= \dot \theta_n  - 2\alpha K \theta_n- 2\alpha C \dot\theta_n\\
@@ -488,8 +488,6 @@ Arranged them in the state space equation, we can get a discrete map $M_{pd}$:
 
 
 
-
-
 \subsubsection{Analytical Solution for Eq.\ref{eq:SimpleHopper}}
 Start from $t_0$ (the beginning of the flight phase), assuming $Z = [0, \dot z_0]^T$, then we can get:
 
@@ -522,10 +520,102 @@ From Eqs. \ref{eq:tContact} and \ref{eq:tFlight} we can get
 \rightarrow t_{flight} + t_{contact} &= T = (f/mg)t_{contact}
 \end{align*}
 
+\pagebreak	
+
+
+\subsection{Stability Analysis of an Open-loop Controlled Hopper with Continuous Pitch Angle Control}
+Consider the case that $\Delta x = k\theta(t)$ or $\Delta x = k_p\theta(t) + k_d\dot\theta(t)$, then the pitch angle will be controlled continuously in the stance phase. The flight phase remained the same as there is no ground reaction force can act on the body: 
+\begin{align}
+\label{eq:EOM_flight}
+\dot X = 
+\begin{bmatrix}
+\dot \theta  \\
+\ddot \theta
+\end{bmatrix} = \begin{bmatrix}
+0 & 1 \\
+0 & 0
+\end{bmatrix}\begin{bmatrix}
+\theta \\
+\dot \theta
+\end{bmatrix}
+\end{align}
+
+\subsubsection{Poincare map of Hopper with Continuous Proportional Control}
+
+Assuming $\Delta x = k\theta(t)$, then the system dynamic in the stance phase becomes:
+\begin{align}
+\label{eq:EOM_flight2}
+\dot X = 
+\begin{bmatrix}
+\dot \theta  \\
+\ddot \theta
+\end{bmatrix} = \begin{bmatrix}
+0 & 1 \\
+-k\frac{f}{I} & 0
+\end{bmatrix}X \triangleq \begin{bmatrix}
+0 & 1 \\
+-2K & 0
+\end{bmatrix}X = AX
+\end{align}
+\noindent where $K =\frac{1}{2} \frac{f}{I}k$. Again denoting the state at the $n^{th}$ step Poincare section $\theta_n, \dot \theta_n$ (defined at the start of the flight phase). Then we can first calculate the touchdown state at $n_{th}$ step:
+\begin{align}
+\nonumber\theta_{n_{TD}} &= \theta_{n} + \dot \theta_{n}t_{flight}\\
+\nonumber\dot \theta_{n_{TD}} &= \dot \theta_{n}
+\end{align}
+Next, assuming the contact time is exactly $t_{contact}= \alpha$ (e.g. no perturbation in $z$ direction), then the $X_{n+1} = [\theta_{n+1}, \dot \theta_{n+1}]^T$ can be expressed with $X_{n_{TD}} = [\theta_{n_{TD}}, \dot \theta_{n_{TD}}]^T$:
+\begin{align}
+X_{n+1} &= e^{A\alpha}(X_{n{TD}} - X_{eq}) +X_{eq} \\
+        &= e^{A\alpha}(\begin{bmatrix}
+        1 & (T-\alpha) \\
+        0 & 1
+        \end{bmatrix}(X_n -X_{eq}) + X_{eq}
+\end{align}
+where $X_{eq} = [0,0]^T$ is the equilibrium point of Eq. \ref{eq:EOM_flight2}. Therefore, we can get the Poincare map in this case is:
+\begin{align}
+M &=   e^{A\alpha}(\begin{bmatrix}
+        1 & (T-\alpha) \\
+        0 & 1
+        \end{bmatrix}\\
+   & =  \begin{bmatrix}
+           1 & T-\alpha + e^{\alpha} \\
+           e^{-2K\alpha} & e^{-2K\alpha}(T-\alpha)+1
+           \end{bmatrix}
+\end{align}
+
+\subsubsection{Poincare map of Hopper with Continuous PD Control}
+
+Assuming $\Delta x = k_p\theta(t) + k_d\dot\theta(t)$, then the system dynamic in the stance phase becomes:
+\begin{align}
+\label{eq:EOM_flight3}
+\dot X = 
+\begin{bmatrix}
+\dot \theta  \\
+\ddot \theta
+\end{bmatrix} = \begin{bmatrix}
+0 & 1 \\
+-k_p\frac{f}{I} & -k_d\frac{f}{I}
+\end{bmatrix}X \triangleq \begin{bmatrix}
+0 & 1 \\
+-2K & -2C
+\end{bmatrix}X = AX
+\end{align}
+
+Therefore, we can get the Poincare map in this case is:
+\begin{align}
+M &=   e^{A\alpha}(\begin{bmatrix}
+        1 & (T-\alpha) \\
+        0 & 1
+        \end{bmatrix}\\
+   & =  \begin{bmatrix}
+           1 & T-\alpha + e^{\alpha} \\
+           e^{-2K\alpha} & e^{-2K\alpha}(T-\alpha) + e^{-2C\alpha}
+           \end{bmatrix}
+\end{align}
 \pagebreak
 
-\subsubsection{General Poincare map for Hybrid Linear Systems with Arbitrary Mode Poundaries}
-Assuming the system is linear and time-invariant, and given by the following differential equations:
+
+\subsubsection{General Solution of Poincare map of Hybrid Linear Systems}
+
 
 \begin{align}
 \dot Z = AZ +B
@@ -560,5 +650,8 @@ and takes time $\Delta t$ from $X_n$ to $X_{n+1}$, then the Poincare map (Jacobi
 0 & e^{A\Delta t}
 \end{bmatrix}
 \end{align}
+
+
+
 
 \pagebreak
