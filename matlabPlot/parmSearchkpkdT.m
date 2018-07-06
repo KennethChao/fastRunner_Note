@@ -2,12 +2,12 @@ clc;
 clear;
 close all;
 
-kpMax = 20;
-kdMax = 7;
+kpMax = 200;
+kdMax = 200;
 sampledNum = 200;
 
-aMin = 0.375;
-aMax = 0.62;
+aMin = 2 ;
+aMax = 2;
 sampledNum2 = 20;
 
 
@@ -23,7 +23,7 @@ else
 [X,Y,Z] = meshgrid(kpSampled,kdSampled,aSampled);
 end
 Map = X;
-ratio = 0.6;
+ratio = 0.1;
 m = 1;
 I = 10;
 
@@ -41,15 +41,20 @@ for i = 1:size(X,1)
                 K = 1/2*f/I*kp;
                 C = 1/2*f/I*kd;
 
-                A = [1-a^2*K T-a^2*C; 
-                    -2*a*K 1-2*a*C];
+%                 A = [1-a^2*K T-a^2*C; 
+%                     -2*a*K 1-2*a*C];
+A = [ (exp(-a*(C + (C^2 - 2*K)^(1/2)))*(C^2 - 2*K)^(1/2) - C*exp(-a*(C + (C^2 - 2*K)^(1/2))) + exp(-a*(C - (C^2 - 2*K)^(1/2)))*(C^2 - 2*K)^(1/2) + C*exp(-a*(C - (C^2 - 2*K)^(1/2))))/(2*(C^2 - 2*K)^(1/2)), (exp(-a*(C - (C^2 - 2*K)^(1/2))) - exp(-a*(C + (C^2 - 2*K)^(1/2))))/(2*(C^2 - 2*K)^(1/2)) + ((T - a)*(exp(-a*(C + (C^2 - 2*K)^(1/2)))*(C^2 - 2*K)^(1/2) - C*exp(-a*(C + (C^2 - 2*K)^(1/2))) + exp(-a*(C - (C^2 - 2*K)^(1/2)))*(C^2 - 2*K)^(1/2) + C*exp(-a*(C - (C^2 - 2*K)^(1/2)))))/(2*(C^2 - 2*K)^(1/2));
+                                                                                                             (K*exp(-a*(C + (C^2 - 2*K)^(1/2))) - K*exp(-a*(C - (C^2 - 2*K)^(1/2))))/(C^2 - 2*K)^(1/2), (exp(-a*(C + (C^2 - 2*K)^(1/2)))*(C^2 - 2*K)^(1/2) + C*exp(-a*(C + (C^2 - 2*K)^(1/2))) + exp(-a*(C - (C^2 - 2*K)^(1/2)))*(C^2 - 2*K)^(1/2) - C*exp(-a*(C - (C^2 - 2*K)^(1/2))))/(2*(C^2 - 2*K)^(1/2)) + ((T - a)*(K*exp(-a*(C + (C^2 - 2*K)^(1/2))) - K*exp(-a*(C - (C^2 - 2*K)^(1/2)))))/(C^2 - 2*K)^(1/2)];
+                try
                 qq = abs(eig(A));
-                if qq(1)<1 && qq(2)<1
-                    Map(i,j) = max(qq);
-                else
-                    Map(i,j) = nan ;
-                end  
-                
+                    if qq(1)<1 && qq(2)<1
+                        Map(i,j) = max(qq);
+                    else
+                        Map(i,j) = nan ;
+                    end  
+                catch
+                Map(i,j) = nan ;    
+                end
             else
                 kp = X(i,j,k);
                 kd = Y(i,j,k);      
@@ -59,14 +64,17 @@ for i = 1:size(X,1)
                 K = 1/2*f/I*kp;
                 C = 1/2*f/I*kd;
 
-                A = [1-a^2*K T-a^2*C; 
-                    -2*a*K 1-2*a*C];
+%                 A = [1-a^2*K T-a^2*C; 
+%                     -2*a*K 1-2*a*C];
+A = [           1,          T - a + exp(a);
+ exp(-2*K*a), exp(-2*K*a)*(T - a) + 1]               ;                    
                 qq = abs(eig(A));
-                if qq(1)<1 && qq(2)<1
-                    Map(i,j,k) = max(qq);
-                else
-                    Map(i,j,k) = nan ;
-                end              
+%                 if real(qq(1))<0 && real(qq(2))<0
+%                 if qq(1)<1 && qq(2)<1
+                    Map(i,j,k) = abs(det(A));%max(qq);
+%                 else
+%                     Map(i,j,k) = nan ;
+%                 end              
             end
         end
     end
@@ -86,7 +94,7 @@ if aMin == aMax
     xlabel('$kp$','Interpreter','latex')
     ylabel('$kd$','Interpreter','latex')
     view(2)
-    axis([0 5 0 5])
+    axis([0 kpMax 0 kdMax])
 else
     h=slice(X,Y,Z,Map/max(max(max(Map))),kpSampled,kdSampled,aSampled);
 

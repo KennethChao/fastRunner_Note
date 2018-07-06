@@ -9,15 +9,7 @@
 \label{fig.1DOF-Hopper}
 \end{figure}
 
-%\subsubsection{System assumptions}
-%\begin{itemize}
-%\item massless leg
-%\item open-loop force control
-%\end{itemize}
-%\subsubsection{Sequence}
-%\{AIR\_OFF, GROUND\_OFF, GROUND\_ON, AIR\_ON\}
 
-%
 \subsubsection{Equation of motion}
 Using the model as shown in Fig. \ref{fig.1DOF-Hopper}, during the stand phase (i.e. $y\leq 0$), the equation of motion can be expressed as:
 \begin{align*}
@@ -86,93 +78,7 @@ When the hopper is in the air (i.e. $y> 0$, flight phase),
     0, & \text{otherwise}.
   \end{cases}
 \end{align}
-%
-%\noindent\textbf{Solutions}
-%
-%For \eqref{eq:airEOM}:
-%\begin{align}
-%\label{eq:airEOMsol}
-%X(t) = \begin{bmatrix}
-%1 & t \\
-%0 & 0
-%\end{bmatrix}X_0 + 
-%\begin{bmatrix}
-%t^2/2  \\
-% t
-%\end{bmatrix}(-g)
-%\end{align}
-%
-%For \eqref{eq:groundEOM} when actuator is on:
-%\begin{align}
-%\label{eq:groundEOMsol}
-%X(t) = e^{At}(X_0-X_{eq_{on}}) + X_{eq_{on}}
-%\end{align}
-%
-%For \eqref{eq:groundEOM} when actuator is off:
-%\begin{align}
-%\label{eq:groundEOMsol2}
-%X(t) = e^{At}(X_0-X_{eq_{off}}) + X_{eq_{off}}
-%\end{align}
-%
-%where $X_{eq_{on}}$ and $X_{eq_{off}}$ are the equilibrium states:
-%\begin{align}
-%\label{eq:eqStates}
-%X_{eq_{on}} &= [\frac{f_n-g}{\omega^2}, 0]^T\\
-%X_{eq_{off}}&= [\frac{-g}{\omega^2}, 0]^T
-%\end{align}
-%
-%\subsubsection{Stability Analysis}
-%\textbf{Eigen values}
-%For \eqref{eq:airEOM}, eigen values are $\pm 1$, in inherently unstable. (Why this does not matter? Because the contact)
-%
-%\noindent For \eqref{eq:groundEOM}, eigen values are
-%$-\xi\omega \pm \omega\sqrt{(\xi^2-1)} = -\omega(\xi \pm \sqrt{\xi^2 -1}) = -\omega(\xi \pm i\sqrt{1-\xi^2 })$ As long as \omega  and \xi are larger than zero, the \textbf{unforced} system is stable.\\
-%
-%\pagebreak
-%
-%\noindent\textbf{Poincare Method: The rest part skipped}\\
-%Reasons: For more complex systems, hard to analytically derive the Poincare map (usually no closed-form solution). Found a package in spokeRunner simulation for Poincare Analysis (numerically), plan to reuse it.
-%
-%\begin{figure}[H]
-%\centering
-%
-%\includegraphics{modes.pdf} 
-%\caption{The modes of the hopper \cite{Cham2002}}
-%\label{fig.modes}
-%\end{figure}
-%
-%Assumptions:
-%\begin{itemize}
-%\item the period is T
-%\item two modes need to be checked
-%\item $X(0) = X_{N_n}$ where $n$ indicates the $n^{th}$ trajectory
-%\end{itemize}
-%
-%\noindent Using Equations \ref{eq:groundEOMsol}, we can derive
-%\begin{align*}
-%X(t_{on_n} )= e^{At_{on_n}}(X_{N_n} - X_{eq_{on}})+ X_{eq_{on}}
-%\end{align*}
-%\noindent Use the fact that 
-%\begin{align*}
-%X(t_{on_n}+2t_{a_n}) = -X(t_{on_n} ) 
-%\end{align*}
-%
-%\noindent Then we can calculate the $X_{N_{n+1}}$ as follows:
-%\begin{align}
-%\nonumber X_{N_{n+1}} &= e^{A(T-2t_{a_n}-t_{on_n})}(-X(t_{on_n} ) - X_{eq_{off}}) + X_{eq_{off}}\\\
-%\nonumber X_{N_{n+1}} &= e^{A(T-2t_{a_n}-t_{on_n})}(-e^{At_{on_n}}(X_{N_n} - X_{eq_{on}})- X_{eq_{on}} ) - X_{eq_{off}}) + X_{eq_{off}}\\
-%&= X_{eq_{off}}-e^{A(T-2t_{a_n})}(X_{N_n}-X_{e_{on}}) -e^{A(T-2t_{a_n}-t_{on_n})}( X_{eq_{on}}+ X_{eq_{off}})
-%\end{align}
-%
-%About the second switch surface $X_{landing_n}$,
-%\begin{align}
-%X_{landing_n} = -X(t_{on_n} ) =- e^{At_{on_n}}(X_{N_n} - X_{eq_{on}})- X_{eq_{on}}
-%\end{align}
-%
-%\pagebreak
-%\subsection{Jerry's proof for pitch stability }
-%
-%
+
 \subsection{Stability Analysis of an Open-loop Controlled Hopper with Discrete Pitch Angle Control}
 Use the state space of z motion form \ref{eq:groundEOM} with a simplified open-loop force input:
 
@@ -278,32 +184,7 @@ Arranged them in the state space equation, we can get a discrete map $M$ (i.e. P
 \end{bmatrix}
 \end{align}
 
-%\begin{align*}
-%\begin{bmatrix}
-%\theta_{n+1}  \\
-%\sqrt\alpha\dot \phi_{n+1}
-%\end{bmatrix} = \begin{bmatrix}
-%1-2\alpha K & 1 \\
-%-\sqrt{\alpha}K & \sqrt\alpha
-%\end{bmatrix}\begin{bmatrix}
-% \theta_n  \\
-% \dot \phi_n 
-%\end{bmatrix} \rightarrow
-%\end{align*}
 
-%\begin{align}
-%\begin{bmatrix}
-%\theta_{n+1}  \\
-%\dot \phi_{n+1}
-%\end{bmatrix} = \begin{bmatrix}
-%1-2\alpha K & 1 \\
-%-K & 1
-%\end{bmatrix}\begin{bmatrix}
-% \theta_n  \\
-%\dot \phi_n 
-%\end{bmatrix}
-%\end{align}
-\pagebreak
 \noindent \textbf{Eigen value analysis}\\
 To analyze the stability of the equation in \ref{eq:PoincareMap}, we need to check whether the eigen values of Poincare map $M$ are within the unit cycle. Similar to the Rooth-Herwitz method for the continuous map, we can use Jury Stability Test (Ogata, 1985)\footnote{contents quotated from \cite{Cham2002}}, which states that a discrete system of two dimensions with the characteristic equations P(z) of the form:
 \begin{align*}
@@ -470,24 +351,9 @@ Arranged them in the state space equation, we can get a discrete map $M_{pd}$:
 %\dot \phi_n 
 %\end{bmatrix}
 %\end{align}
+
+
 \pagebreak
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 \subsubsection{Analytical Solution for Eq.\ref{eq:SimpleHopper}}
 Start from $t_0$ (the beginning of the flight phase), assuming $Z = [0, \dot z_0]^T$, then we can get:
 
@@ -568,21 +434,17 @@ X_{n+1} &= e^{A\alpha}(X_{n{TD}} - X_{eq}) +X_{eq} \\
         &= e^{A\alpha}(\begin{bmatrix}
         1 & (T-\alpha) \\
         0 & 1
-        \end{bmatrix}(X_n -X_{eq}) + X_{eq}
+        \end{bmatrix}X_n -X_{eq}) + X_{eq}
 \end{align}
 where $X_{eq} = [0,0]^T$ is the equilibrium point of Eq. \ref{eq:EOM_flight2}. Therefore, we can get the Poincare map in this case is:
 \begin{align}
 M &=   e^{A\alpha}(\begin{bmatrix}
         1 & (T-\alpha) \\
         0 & 1
-        \end{bmatrix}\\
-   & =  \begin{bmatrix}
-           1 & T-\alpha + e^{\alpha} \\
-           e^{-2K\alpha} & e^{-2K\alpha}(T-\alpha)+1
-           \end{bmatrix}
+        \end{bmatrix}
 \end{align}
 
-\subsubsection{Poincare map of Hopper with Continuous PD Control}
+\subsubsection{Poincare Map of Hopper with Continuous PD Control}
 
 Assuming $\Delta x = k_p\theta(t) + k_d\dot\theta(t)$, then the system dynamic in the stance phase becomes:
 \begin{align}
@@ -591,30 +453,22 @@ Assuming $\Delta x = k_p\theta(t) + k_d\dot\theta(t)$, then the system dynamic i
 \begin{bmatrix}
 \dot \theta  \\
 \ddot \theta
-\end{bmatrix} = \begin{bmatrix}
+\end{bmatrix} &= \begin{bmatrix}
 0 & 1 \\
 -k_p\frac{f}{I} & -k_d\frac{f}{I}
 \end{bmatrix}X \triangleq \begin{bmatrix}
 0 & 1 \\
 -2K & -2C
-\end{bmatrix}X = AX
-\end{align}
-
-Therefore, we can get the Poincare map in this case is:
-\begin{align}
-M &=   e^{A\alpha}(\begin{bmatrix}
+\end{bmatrix}X = AX\\
+M_{pd} &=   e^{A\alpha}(\begin{bmatrix}
         1 & (T-\alpha) \\
         0 & 1
-        \end{bmatrix}\\
-   & =  \begin{bmatrix}
-           1 & T-\alpha + e^{\alpha} \\
-           e^{-2K\alpha} & e^{-2K\alpha}(T-\alpha) + e^{-2C\alpha}
-           \end{bmatrix}
+        \end{bmatrix}
 \end{align}
+
 \pagebreak
 
-
-\subsubsection{General Solution of Poincare map of Hybrid Linear Systems}
+\subsubsection{General Solution of Poincare Map of Hybrid Linear Systems}
 
 
 \begin{align}

@@ -1,19 +1,29 @@
-clc
-syms  zd f 
-syms kp kd kpt kdt
+sigma = 10;
+beta = 8/3;
+rho = 28;
+parms = {};
+parms.sigma = sigma;
+parms.beta = beta;
+parms.rho = rho;
 
-syms T a K C
+close all;
+f = @(t,a) dymModel(t,a);
 
-A = [0 1; -2*K 0]
-A = [0 1; -2*K -2*C]
-B = [1 (T-a); 0 1]
-%  exp(A)
-exp(A*a)*B
-%% first flight
+% x0 = [16.21325444114593,-55.78140243373939,249];
+for xdot = 0.3:1:10
+x0 = [1.5, xdot];
+[t,a] = ode45(f,[0 100],x0);     % Runge-Kutta 4th/5th order ODE solver
+plot(a(:,1),a(:,2))
 
+hold on
+end
 
-% B = [0;0;0;0];
+function da = dymModel(t,a)
+x = a(1);
+y = a(2);
 
-% Xe = [-A^-1*B]
+dx = 0.4*x-0.001*x*y;
+dy = -0.3*y+0.5*x*y;
 
-% [1 a ; 0 1]* [1 T-a ; 0 1 ]
+da = [dx;dy];
+end
