@@ -2,7 +2,7 @@
 clc;
 clear;
 
-listing = dir(pwd);
+listing = dir(pwd)
 
 kpMax = 10;
 kdMax = 10;
@@ -26,7 +26,7 @@ for i = 1:length(listing)
         fz = root.Runner.contactPoint0_fZ;
         diffFz = diff(fz);
         positiveIndex = find(diffFz>0)+1;
-%%
+
         q_pitchPoincareSection = q_pitch(positiveIndex);
         q_pitchPoincareSectionStepN = q_pitchPoincareSection(1:(end-1));
         q_pitchPoincareSectionStepNplus1 = q_pitchPoincareSection(2:end);
@@ -42,31 +42,20 @@ for i = 1:length(listing)
 
         [ev, D]=eig(A);
         x = diag(D);
-        clc;
-        absx = abs(x)
-
-%%
-        unshiftedX = [q_pitch(1:(end-1));qd_pitch(1:(end-1))];
-        shiftedX = [q_pitch(2:end);qd_pitch(2:end)];
+        absx = abs(x);
         
-        [evals,modes,Atilde] = tdmd(unshiftedX,shiftedX,10);
-        evals
-%%
         str = name;
         C = strsplit(str,'_');
         kpIndex = str2double(C(3))+1;
         kdIndex = str2double(C(5))+1;
-        
-        
-        if absx(1)<=1 && absx(2)<=1
+        if absx(1)<1 && absx(2)<1
         Map(kdIndex,kpIndex) = max(absx);            
         else
         Map(kdIndex,kpIndex) = nan;
-        
         end
-%         if rank(A) ==1
-%             Map(kdIndex,kpIndex) = nan;
-%         end
+        if rank(A) ==1
+            Map(kdIndex,kpIndex) = nan;
+        end
 %         figure()
 % 
 %         plot(q_pitchPoincareSection,qd_pitchPoincareSection,'o')
@@ -74,9 +63,10 @@ for i = 1:length(listing)
     
 end
 figure()
-    h=surf(X,Y,Map/max(max(Map)));
+
+    h=surf(X,Y,Map);
     set(h,'FaceColor','interp');%,'EdgeColor','none'
-    
+    caxis([0 1])
     set(h,'DefaultTextFontName','Times','DefaultTextFontSize',18,...
        'DefaultAxesFontName','Times','DefaultAxesFontSize',18,...
     'DefaultLineLineWidth',1,'DefaultLineMarkerSize',7.75)

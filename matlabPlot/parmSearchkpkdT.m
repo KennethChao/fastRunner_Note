@@ -1,13 +1,13 @@
 clc;
 clear;
-close all;
+% close all;
 
-kpMax = 200;
-kdMax = 200;
-sampledNum = 200;
+kpMax = 10
+kdMax = 10;
+sampledNum = 100;
 
-aMin = 2 ;
-aMax = 2;
+aMin = 0.25 ;
+aMax = 0.25;
 sampledNum2 = 20;
 
 
@@ -23,9 +23,9 @@ else
 [X,Y,Z] = meshgrid(kpSampled,kdSampled,aSampled);
 end
 Map = X;
-ratio = 0.1;
+ratio = 0.4;
 m = 1;
-I = 10;
+I = 0.5;
 
 for i = 1:size(X,1)
     for j = 1:size(X,2)
