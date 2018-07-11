@@ -1,3 +1,6 @@
+% TODO add reference for the system, add comments for the purpose of this
+% code
+
 sigma = 10;
 beta = 8/3;
 rho = 28;

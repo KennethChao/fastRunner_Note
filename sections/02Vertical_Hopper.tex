@@ -390,21 +390,23 @@ From Eqs. \ref{eq:tContact} and \ref{eq:tFlight} we can get
 
 
 \subsection{Stability Analysis of an Open-loop Controlled Hopper with Continuous Pitch Angle Control}
-Consider the case that $\Delta x = k\theta(t)$ or $\Delta x = k_p\theta(t) + k_d\dot\theta(t)$, then the pitch angle will be controlled continuously in the stance phase. The flight phase remained the same as there is no ground reaction force can act on the body: 
-\begin{align}
-\label{eq:EOM_flight}
-\dot X = 
-\begin{bmatrix}
-\dot \theta  \\
-\ddot \theta
-\end{bmatrix} = \begin{bmatrix}
-0 & 1 \\
-0 & 0
-\end{bmatrix}\begin{bmatrix}
-\theta \\
-\dot \theta
-\end{bmatrix}
-\end{align}
+Consider the case that $\Delta x = k\theta(t)$ or $\Delta x = k_p\theta(t) + k_d\dot\theta(t)$, then the pitch angle will be controlled continuously in the stance phase. 
+
+%The flight phase remained the same as there is no ground reaction force can act on the body: 
+%\begin{align}
+%\label{eq:EOM_flight}
+%\dot X = 
+%\begin{bmatrix}
+%\dot \theta  \\
+%\ddot \theta
+%\end{bmatrix} = \begin{bmatrix}
+%0 & 1 \\
+%0 & 0
+%\end{bmatrix}\begin{bmatrix}
+%\theta \\
+%\dot \theta
+%\end{bmatrix}
+%\end{align}
 
 \subsubsection{Poincare map of Hopper with Continuous Proportional Control}
 
@@ -423,10 +425,17 @@ Assuming $\Delta x = k\theta(t)$, then the system dynamic in the stance phase be
 -2K & 0
 \end{bmatrix}X = AX
 \end{align}
-\noindent where $K =\frac{1}{2} \frac{f}{I}k$. Again denoting the state at the $n^{th}$ step Poincare section $\theta_n, \dot \theta_n$ (defined at the start of the flight phase). Then we can first calculate the touchdown state at $n_{th}$ step:
+\noindent where $K =\frac{1}{2} \frac{f}{I}k$. Again denoting the state at the $n^{th}$ step Poincare section $X_n = [\theta_n, \dot \theta_n]^T$ (defined at the start of the flight phase). Then we can first calculate the touchdown state at $n_{th}$ step:
 \begin{align}
 \nonumber\theta_{n_{TD}} &= \theta_{n} + \dot \theta_{n}t_{flight}\\
 \nonumber\dot \theta_{n_{TD}} &= \dot \theta_{n}
+\end{align}
+and $X_{n_{TD}} = [\theta_{n_{TD}}, \dot \theta_{n_{TD}}]^T$ then can be expressed as:
+\begin{align}
+X_{n_{TD}} = \begin{bmatrix}
+        1 & (T-\alpha) \\
+        0 & 1
+        \end{bmatrix}X_n
 \end{align}
 Next, assuming the contact time is exactly $t_{contact}= \alpha$ (e.g. no perturbation in $z$ direction), then the $X_{n+1} = [\theta_{n+1}, \dot \theta_{n+1}]^T$ can be expressed with $X_{n_{TD}} = [\theta_{n_{TD}}, \dot \theta_{n_{TD}}]^T$:
 \begin{align}
@@ -443,6 +452,23 @@ M &=   e^{A\alpha}(\begin{bmatrix}
         0 & 1
         \end{bmatrix}
 \end{align}
+
+\noindent Using symbolic tool in MATLAB, we can derive the closed-form expression of $M$ as follows:
+
+\begin{align*}
+M =& \begin{bmatrix}
+M_{11} M_{12}  \\
+M_{21} M_{22}
+\end{bmatrix}\\
+\end{align*}
+where
+\begin{align*}
+M_{11} =&\frac{{\mathrm{e}}^{\sqrt{2}\,\sqrt{-K}\,a}}{2}+\frac{{\mathrm{e}}^{-\sqrt{2}\,\sqrt{-K}\,a}}{2}\\
+M_{12} =&\left(\frac{{\mathrm{e}}^{\sqrt{2}\,\sqrt{-K}\,a}}{2}+\frac{{\mathrm{e}}^{-\sqrt{2}\,\sqrt{-K}\,a}}{2}\right)\,\left(T-a\right)+\frac{\sqrt{2}\,{\mathrm{e}}^{\sqrt{2}\,\sqrt{-K}\,a}-\sqrt{2}\,{\mathrm{e}}^{-\sqrt{2}\,\sqrt{-K}\,a}}{4\,\sqrt{-K}}\\
+M_{21} =&\frac{\sqrt{2}\,\sqrt{-K}\,{\mathrm{e}}^{\sqrt{2}\,\sqrt{-K}\,a}}{2}-\frac{\sqrt{2}\,\sqrt{-K}\,{\mathrm{e}}^{-\sqrt{2}\,\sqrt{-K}\,a}}{2}\\
+M_{22} =&\frac{{\mathrm{e}}^{\sqrt{2}\,\sqrt{-K}\,a}}{2}+\frac{{\mathrm{e}}^{-\sqrt{2}\,\sqrt{-K}\,a}}{2}+\left(\frac{\sqrt{2}\,\sqrt{-K}\,{\mathrm{e}}^{\sqrt{2}\,\sqrt{-K}\,a}}{2}-\frac{\sqrt{2}\,\sqrt{-K}\,{\mathrm{e}}^{-\sqrt{2}\,\sqrt{-K}\,a}}{2}\right)\,\left(T-a\right)
+\end{align*}
+
 
 \subsubsection{Poincare Map of Hopper with Continuous PD Control}
 
@@ -465,6 +491,25 @@ M_{pd} &=   e^{A\alpha}(\begin{bmatrix}
         0 & 1
         \end{bmatrix}
 \end{align}
+
+\noindent Using symbolic tool in MATLAB, we can derive the closed-form expression of $M_{pd}$ as follows:
+
+\begin{align*}
+M_{pd} =& \begin{bmatrix}
+M_{11} M_{12}  \\
+M_{21} M_{22}
+\end{bmatrix}\\
+\end{align*}
+where
+\begin{align*}
+M_{11} =& \frac{C\,{\mathrm{e}}^{a\,\sqrt{C^2-2\,K}-C\,a}-C\,{\mathrm{e}}^{-C\,a-a\,\sqrt{C^2-2\,K}}+{\mathrm{e}}^{a\,\sqrt{C^2-2\,K}-C\,a}\,\sqrt{C^2-2\,K}+{\mathrm{e}}^{-C\,a-a\,\sqrt{C^2-2\,K}}\,\sqrt{C^2-2\,K}}{2\,\sqrt{C^2-2\,K}}\\
+M_{12} =& 
+\frac{{\mathrm{e}}^{a\,\sqrt{C^2-2\,K}-C\,a}-{\mathrm{e}}^{-C\,a-a\,\sqrt{C^2-2\,K}}}{2\,\sqrt{C^2-2\,K}}+\\ &\frac{\left(T-a\right)\,\left(C\,{\mathrm{e}}^{a\,\sqrt{C^2-2\,K}-C\,a}-C\,{\mathrm{e}}^{-C\,a-a\,\sqrt{C^2-2\,K}}+{\mathrm{e}}^{a\,\sqrt{C^2-2\,K}-C\,a}\,\sqrt{C^2-2\,K}+{\mathrm{e}}^{-C\,a-a\,\sqrt{C^2-2\,K}}\,\sqrt{C^2-2\,K}\right)}{2\,\sqrt{C^2-2\,K}}\\
+M_{21} =& -\frac{K\,{\mathrm{e}}^{a\,\sqrt{C^2-2\,K}-C\,a}-K\,{\mathrm{e}}^{-C\,a-a\,\sqrt{C^2-2\,K}}}{\sqrt{C^2-2\,K}}\\
+M_{22} =& \frac{C\,{\mathrm{e}}^{-C\,a-a\,\sqrt{C^2-2\,K}}-C\,{\mathrm{e}}^{a\,\sqrt{C^2-2\,K}-C\,a}+{\mathrm{e}}^{a\,\sqrt{C^2-2\,K}-C\,a}\,\sqrt{C^2-2\,K}+{\mathrm{e}}^{-C\,a-a\,\sqrt{C^2-2\,K}}\,\sqrt{C^2-2\,K}}{2\,\sqrt{C^2-2\,K}}-
+\\ &\frac{\left(T-a\right)\,\left(K\,{\mathrm{e}}^{a\,\sqrt{C^2-2\,K}-C\,a}-K\,{\mathrm{e}}^{-C\,a-a\,\sqrt{C^2-2\,K}}\right)}{\sqrt{C^2-2\,K}}
+\end{align*}
+
 
 \pagebreak
 
