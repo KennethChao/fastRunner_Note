@@ -2,11 +2,12 @@
 clc;
 clear;
 % cd Data/continuousPD/Normal
-cd Data/continuousPD/Period0.5
+% cd Data/continuousPD/Period1.0
+cd Data/discretePD/Period1.0
 listing = dir(pwd);
 
-kpMax = 1;
-kdMax = 1;
+kpMax = 5;
+kdMax = 5;
 sampledNum = 20;
 
 
@@ -59,7 +60,7 @@ for i = 1:length(listing)
         kdIndex = str2double(C(5))+1;
         
         
-        if absx(1)<=1 && absx(2)<=1
+        if absx(1)<1 && absx(2)<1
         Map(kdIndex,kpIndex) = max(absx);            
         else
         Map(kdIndex,kpIndex) = nan;

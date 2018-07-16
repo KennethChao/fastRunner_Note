@@ -280,3 +280,5 @@ TSWLatexianTemp*
 
 # standalone packages
 *.sta
+
+./matlabPlot/Data*

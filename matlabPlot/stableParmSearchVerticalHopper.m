@@ -5,11 +5,11 @@ close all;
 %% Control setting and parameter range
 
 % 'discreteP' 'discretePD' 'continuousP' 'continuousPD'
-controlType = 'continuousPD';
+controlType = 'discretePD';
 
 
-kpMax = 1000;
-kdMax = 1000;
+kpMax = 5;
+kdMax = 5;
 sampledNum = 200;
 
 
@@ -18,9 +18,9 @@ sampledNum = 200;
 % 'hoppingPeriod' 'dutyFactor'
 searchVariable = 'hoppingPeriod';
 if strcmp(searchVariable, 'hoppingPeriod')
-    aMin = 0.7;
-    aMax = 0.7;
-    dutyFactor = 0.4;
+    aMin = 0.5;
+    aMax = 0.5;
+    dutyFactor = 0.6;
 elseif strcmp(searchVariable, 'dutyFactor')
     T = 0.25;
     aMin =0.2*T;
@@ -31,7 +31,7 @@ sampledNum2 = 20;
 
 %% Model parameter and Map Initialization
 m = 1;
-I = 0.5;
+I = 10;
 
 kpSampled = 0:kpMax / (sampledNum - 1):kpMax;
 kdSampled = 0:kdMax / (sampledNum - 1):kdMax;
