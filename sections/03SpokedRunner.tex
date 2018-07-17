@@ -1,0 +1,106 @@
+\section{Linear Approximation of Virtual Pivot Point Model of 2D Spoked Runner}
+
+Extended from the vertical hopper, this model is aimed to use for analysis of coupled dynamics of the spoked runner, which has following assumptions
+
+\begin{itemize}
+\item massless leg
+\item pointmass as the body
+\end{itemize}
+
+
+\subsection{System Kinematics}
+As indicated in Fig XXX, the position of the body (mass) is
+\begin{align*}
+x &= lcos\theta + r_ccos(\theta +\phi)\\
+z &= lsin\theta + r_csin(\theta +\phi)\\
+\end{align*}
+and the velocity
+\begin{align*}
+\dot x &= \dot lcos\theta -lsin\theta\dot \theta -  r_csin(\theta +\phi)(\dot\theta +\dot\phi)\\
+\dot z &= \dot lsin\theta + lcos\theta \dot{\theta}+ r_ccos(\theta +\phi)(\dot\theta +\dot\phi)\\
+\end{align*}
+
+
+
+
+
+\subsubsection{Lagrangian Mechanics}
+Wit the velocity of the mass, the Lagrangian $L$ can be expressed as:
+\begin{align*}
+L &= T-V = \frac{1}{2}m(\dot x^2+\dot y^2) - V_{spring} - V_{gravity}\\
+ &= \frac{1}{2}m(\dot l^2 + l^2\dot \theta^2 + r_c^2(\dot\theta+\dot\phi)^2) - \frac{1}{2}k(l-l_0)^2-mg(lsin\theta + r_csin(\theta +\phi))
+\end{align*}
+\begin{align*}
+\frac{\partial L}{\partial l} &= -mgsin\theta+ml\dot\theta^2 - k(l-l_0)\\
+\frac{\partial L}{\partial \dot l} &= m\dot l\\
+\frac{d\partial L}{dt\partial \dot l} &= m\ddot l
+\end{align*}
+
+
+\noindent
+Take $l$, $\theta$, $\phi$ as the generalized coordinate, the equation of motions are:
+\begin{align*}
+m\ddot{l} - ml^2\dot{\theta}^2 + k(l-l_0) &= -mgsin\theta\\
+ml^2\ddot{\theta} + 2ml\dot l \dot{\theta} + mr_c^2(\ddot\theta+\ddot\phi) &= -mglcos\theta - mgr_c(cos(\theta + \phi))\\
+mr_c^2(\ddot\theta+\ddot\phi) &= - mgr_c(cos(\theta + \phi))
+\end{align*}
+\noindent
+However, this will not work, because the lack of the mass for the first link, which will cause the inertia matrix singular.
+\pagebreak
+
+\subsection{System Kinematics}
+As indicated in Fig XXX, the position 
+and the velocity of the frame $m$ are:
+\begin{align*}
+x &= lcos\theta \\
+z &= lsin\theta \\
+\dot x &= \dot lcos\theta -lsin\theta\dot \theta \\
+\dot z &= \dot lsin\theta + lcos\theta \dot{\theta}
+\end{align*}
+The position 
+and the velocity of the body $m_b$ are:
+\begin{align*}
+x_b &= lcos\theta + r_ccos(\theta +\phi)\\
+z_b &= lsin\theta + r_csin(\theta +\phi)\\
+\dot x_b &= \dot lcos\theta -lsin\theta\dot \theta -  r_csin(\theta +\phi)(\dot\theta +\dot\phi)\\
+\dot z_b &= \dot lsin\theta + lcos\theta \dot{\theta}+ r_ccos(\theta +\phi)(\dot\theta +\dot\phi)\
+\end{align*}
+
+
+
+
+
+\subsubsection{Lagrangian Mechanics}
+Wit the velocity of the masses, the Lagrangian $L$ can be expressed as:
+\begin{align*}
+L &= T-V = \frac{1}{2}m(\dot x^2+\dot z^2) + \frac{1}{2}m_b(\dot x_b^2+\dot z_b^2) - V_{spring} - V_{gravity}- V_{b_{gravity}}\\
+ &= \frac{1}{2}m(\dot l^2 + l^2\dot \theta^2) +  
+ \frac{1}{2}m_b(\dot l^2 + l^2\dot \theta^2 + r_c^2(\dot\theta+\dot\phi)^2) - \frac{1}{2}k(l-l_0)^2-mg(lsin\theta)-m_bg(lsin\theta + r_csin(\theta +\phi))
+\end{align*}
+\noindent \underline{EOM of $l$:}
+\begin{align*}
+\frac{\partial L}{\partial l} &= -(m+m_b)gsin\theta+(m+m_b)l\dot\theta^2 - k(l-l_0)\\
+\frac{\partial L}{\partial \dot l} &= (m+m_b)\dot l\\
+\frac{d\partial L}{dt\partial \dot l} &= (m+m_b)\ddot l
+\end{align*}
+\noindent \underline{EOM of $\theta$:}
+\begin{align*}
+\frac{\partial L}{\partial \theta} &= -(m+m_b)glcos\theta-m_bgr_ccos(\theta+\phi)\\
+\frac{\partial L}{\partial \dot \theta} &= (m+m_b)l^2\dot{\theta} + m_br_c^2(\dot{\theta} + \dot{\phi}^2)\\
+\frac{d\partial L}{dt\partial \dot \theta} &= (m+m_b)l^2\ddot{\theta} + 2(m+m_b)l\dot l\dot \theta + m_br_c^2(\ddot{\theta}+\ddot{\phi}) 
+\end{align*}
+\noindent \underline{EOM of $\phi$:}
+\begin{align*}
+\frac{\partial L}{\partial \phi} &=-m_bgr_ccos(\theta+\phi)\\
+\frac{\partial L}{\partial \dot \phi} &= m_br_c^2(\dot{\theta} + \dot{\phi})\\
+\frac{d\partial L}{dt\partial \dot \phi} &= m_br_c^2(\ddot{\theta}+\ddot{\phi}) 
+\end{align*}
+\noindent
+Take $l$, $\theta$, $\phi$ as the generalized coordinate, the equation of motions are:
+\begin{align*}
+(m+m_b)\ddot{l} - (m+m_b)l^2\dot{\theta}^2 + k(l-l_0) &= -(m+m_b)gsin\theta\\
+(m+m_b)l^2\ddot{\theta} + 2(m+m_b)l\dot l \dot{\theta} + m_br_c^2(\ddot\theta+\ddot\phi) &= -(m+m_b)glcos\theta - m_bgr_c(cos(\theta + \phi))\\
+m_br_c^2(\ddot\theta+\ddot\phi) &= - m_bgr_c(cos(\theta + \phi))
+\end{align*}
+\noindent
+\pagebreak
