@@ -39,6 +39,37 @@
 
 
 \section{Info might be useful}
+\subsection{Finding a fixed-point solution from numerical Poincare map}
+If the analytical solution of Poincare map can be derived, then one can obtain the fixed-point easily. The followings are related methods (best to my knowledge) to get fixed-points of Poincare map through simulations:\\
+
+\noindent \textbf{Finding stable fixed-points}\\
+Take a collection of state at Poincare section defined (e.g. at touch down, or the end of the support phase, etc.) as $[x_1,x_2,\ldots,x_n]'$. Take the first $n-1$ states as $X_n = [x_1,x_2,\ldots,x_{n-1}]'$ and the last $n-1$ states as $X_{n+1} = [x_2,x_3,\ldots,x_n]'$, the map $A$ can be approximated as:
+
+\begin{align*}
+X_{n+1} &= A(X_{n})\\
+\rightarrow A &= X_{n+1}/(X_{n})
+\end{align*}
+
+\noindent If the system as a stable fixed point $x^*$, then the following should be satisfied:
+\begin{align*}
+\lim_{n\to\infty} x^* = x_n = Ax_{n-1} = A^nx_1 = x_{n-1}
+\end{align*}
+
+\noindent  Note:
+\begin{itemize}
+\item If $A$ is invertible, the unstable fixed point might be derived it by calculating the Poincare section in the  backward manner. 
+\item Whether the fixed-point is accurate enough is also depending on the quality of data (whether the data is sufficiently rich).
+\item Unlike the method like PCA, the data can only being subtracted by the fixed-point, otherwise the dynamics will be changed (scaling like dimensionless analysis is okay).
+\end{itemize}
+
+\noindent \textbf{Finding fixed-points}\\
+The more general way to find fixed-point is to simulate the system, and evaluate the difference of the periodic condition at the Poincare section as the cost/constraint. \underline{Trajectory Optimization}% is a collection of optimization/root finding methods can find the fixed-point or even the limit cycle solution is called :
+\begin{itemize}
+\item Single Shooting
+\item Multiple Shooting
+\item Direct Collocation
+\end{itemize}
+
 
 \subsection{Going through references}
 \begin{enumerate}

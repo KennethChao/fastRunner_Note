@@ -14,38 +14,19 @@ parms.beta = beta;
 parms.k = k;
 parms.delta = delta;
 
-options = optimset('Display','off')
+options = optimset('Display','iter')
 % [xAns,fval,exitflag,output] = fzero(@(x)perturbedEigenValue(x,parms),0.2597,options)
-samplingNumbK = 100;
-samplingNumbDelta = 3;
-solution = nan*zeros(3,samplingNumbK)
+samplingNumbK = 20;
+samplingNumbDelta = 10;
+soltion = nan*zeros(3,samplingNumbK)
 
-kVec = linspace(0.1,20,samplingNumbK);
-deltaVec = linspace(1e-2,1.5,samplingNumbDelta);
+kVec = linspace(0,20,samplingNumbK);
+deltaVec = linspace(0,2,samplingNumbK);
 
 for i = 1:samplingNumbK
-    parms.k = kVec(i);
-    for j = 1:samplingNumbDelta
-    delta0 = deltaVec(j);
-           
-    [x,fval,exitflag,output]  =fminsearch(@(x)perturbedEigenValue(x,parms),delta0,options);
-        if exitflag ==1 && fval<1e-3 && x>1e-4
-            
-        solution(j,i) = x;
-        end
-    end
-        i
+    for j =     
+[x,fval,exitflag,output]  =fminsearch(@(x)perturbedEigenValue(x,parms),1,options)
 end
-
-
-% plot(solution','bo')
-for i = 1:3
-    plot(kVec,solution(i,:),'bo')
-    hold on
-end
-
-axis([0 20, 0 1])
-
 %%
 function result =  perturbedEigenValue(delta0,parms)
 beta = parms.beta;
