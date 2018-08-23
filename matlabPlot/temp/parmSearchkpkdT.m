@@ -7,7 +7,7 @@ kdMax = 1;
 sampledNum = 200;
 
 % 'discreteP' 'discretePD' 'continuousP' 'continuousPD'
-controlType = 'continuousP';
+controlType = 'continuousPD';
 
 % 'hoppingPeriod' 'dutyFactor'
 searchVariable = 'hoppingPeriod';

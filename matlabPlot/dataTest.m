@@ -2,8 +2,8 @@
 clc;
 clear;
 % cd Data/continuousPD/Normal
-% cd Data/continuousPD/Period1.0
-cd Data/discretePD/Period1.0
+cd Data/continuousPD/Period1.0
+% cd Data/discretePD/Period1.0
 listing = dir(pwd);
 
 kpMax = 5;
