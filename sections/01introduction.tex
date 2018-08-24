@@ -11,6 +11,7 @@ The purpose of this project is to analyze the stability (via Poincare map) of th
 In this analysis, all the models are 2D runners.
 The following are important common assumptions applied to all simple running models in this project
 	\begin{itemize}
+	\item The (steady-state) running motion is periodic.
 	\item Massless leg -- No impact will be induced during foot collision.
 	\item Energy conservation (especially for passive runners)
 	\item Open-loop control on leg (e.g. open-loop leg force, or fixed touch-down angle for SLIP-based runners)
@@ -35,9 +36,9 @@ The following are important common assumptions applied to all simple running mod
 
 \subsection{Related research}
 \begin{itemize}
-	\item Jorge Cham's Dissertation
-	\item David Remy's Dissertation
-	\item Shan's paper
+	\item Jorge Cham's Dissertation \cite{Cham2002}
+	\item David Remy's Dissertation \cite{Remy2011}
+	\item Shen's paper about SLIP model analysis \cite{Shen2016}
 \end{itemize}
 
 \subsection{About the method of stability analysis used in this project}
@@ -52,18 +53,24 @@ The following are important common assumptions applied to all simple running mod
 For the requirements listed above, and also to explore the nonlinearity and coupled dynamics for SLIP-based runners, the main method for stability analysis used in this project contains two parts:
 \begin{itemize}
 	\item Trajectory optimization using single-shooting method -- For finding periodic motions.
-	\item Poincare Map -- Check the Eigen values of the Poincare map (it is a matrix) of a periodic motion to determine its stability (i.e. a stable limit cycle or unstable one).
+	\item Poincare Map -- Check the Eigen values of the Poincare map (it is a matrix) of a periodic motion to determine its stability.
 \end{itemize}
 
+\noindent Please refer to
+\href{https://confluence.ihmc.us/display/FR/Description+of+how+to+find+limit+cycles+and+Poincare+maps+from+Andy+Ruina}{Description of how to find limit cycles and Poincare maps from Andy Ruina}, the note has great numerical recipe for better Poincare map approximation and stability analysis.
 
 \subsubsection{About the Poincare section and Poincare map}
-
+Please check Jorge Cham's thesis \cite{Cham2002} Chapter 2 for more information.
 \subsubsection{About the Trajectory optimization using single shooting method}
-
+This method is widely used for finding stable limit cycles for passive walkers. For more imformation, please check \href{http://www.matthewpeterkelly.com/tutorials/trajectoryOptimization/canon.html}{Matthew Kelly's web page about Canon examples using different trajectory optimization methods}.
 \subsection{Fast running index}
-
-
-\subsection{ToDo}
+Please refer to fast runner meeting notes or proposal for more information.
+\subsection{Other links}
+\begin{itemize}
+	\item \href{https://confluence.ihmc.us/x/Q4BIC}{Ken's slides on the Confluence page}
+	\item project Repo: \href{https://stash.ihmc.us/projects/ICSL/repos/fast-runner-analysis}{https://stash.ihmc.us/projects/ICSL/repos/fast-runner-analysis}
+	\item SCS implementation: RoundRunner under Fast Runner: \href{https://stash.ihmc.us/projects/ICSL/repos/fast-runner/browse/fast-runner/src/main/java/us/ihmc/fastRunner/RoundRunner}{https://stash.ihmc.us/projects/ICSL/repos/fast-runner/browse/fast-runner/src/main/java/us/ihmc/fastRunner/RoundRunner}
+\end{itemize}
 
 %\subsection{Remarks}
 %\begin{itemize}

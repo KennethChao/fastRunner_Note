@@ -79,6 +79,13 @@ When the hopper is in the air (i.e. $y> 0$, flight phase),
   \end{cases}
 \end{align}
 
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale = 0.2]{2DOF_Hopper.pdf} 
+	\caption{The schematic of a 2 DOF hopper}
+	\label{fig.2DOF-Hopper}
+\end{figure}
+
 \subsection{Stability Analysis of an Open-loop Controlled Hopper with Discrete Pitch Angle Control}
 Use the state space of z motion form \ref{eq:groundEOM} with a simplified open-loop force input:
 
@@ -129,7 +136,7 @@ Assumptions:
 \item $t_0$ starts when the foot leaves the ground.
 \item $t_{flight} + t_{contact} = T$, $t_{contact} = \alpha$, and $T>\alpha$
 \end{itemize}
-Then the pitch dynamics with feedback control can be expressed as:
+Then for the 2 DOF vertical hopper as shown in Fig. \ref{fig.2DOF-Hopper}, the pitch dynamics with feedback control can be expressed as:
 \begin{align}
 \begin{bmatrix}
 \dot \theta  \\
